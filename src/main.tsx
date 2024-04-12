@@ -1,10 +1,26 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { StoreContextProvider } from "./context/store-context.ts";
+import { createStore } from "./model/store.ts";
+import App from "./App.tsx";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+export function createApp(container: string) {
+  const store = createStore();
+  store.addPage();
+
+  const domNode = document.getElementById(container)!;
+  const root = createRoot(domNode);
+
+  root.render(
+    <StrictMode>
+      <StoreContextProvider value={store}>
+        <App />
+      </StoreContextProvider>
+    </StrictMode>
+  );
+
+  return;
+}
+
+createApp("root");

@@ -16,6 +16,10 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    data: {
+      ov: 'orientation=vertical',
+      oh: 'orientation=horizontal',
+    },
     extend: {
       keyframes: {
         "accordion-down": {
