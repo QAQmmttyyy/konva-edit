@@ -13,10 +13,8 @@ export const Workspace = () => {
     if (!workspaceDom) return;
 
     const { width, height } = workspaceDom.getBoundingClientRect();
-    console.log("width", width, "height", height);
 
-    const newSize = { width, height };
-    setSize(newSize);
+    setSize({ width, height });
   };
 
   useLayoutEffect(() => {
@@ -27,7 +25,6 @@ export const Workspace = () => {
   useEffect(() => {
     const workspaceDom = workspaceRef.current;
     const resizeObserver = new ResizeObserver(handleWorkspaceResize);
-    console.log("workspaceDom", typeof workspaceDom);
 
     resizeObserver.observe(workspaceDom!);
 
