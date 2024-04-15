@@ -1,14 +1,16 @@
+import { FC } from "react";
 import {
-  CardHeader,
-  CardTitle,
   CardContent,
   CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { ElementItem } from "./element-item";
-import { type, elements } from "./shape-elements.json";
+import { elements, type } from "./shape-elements.json";
+import { ElementItemDragOverlay } from "./element-item-drag-overlay";
 
-export const ShapePanel: React.FC<{ name: string }> = ({ name }) => {
+export const ShapePanel: FC<{ name: string }> = ({ name }) => {
   return (
     <TabsContent value={name} className="w-[301px] !ml-0 bg-white border-r">
       <CardHeader>
@@ -20,10 +22,15 @@ export const ShapePanel: React.FC<{ name: string }> = ({ name }) => {
       <CardContent>
         <div className="grid grid-cols-3 place-content-stretch">
           {elements.map((element) => (
-            <ElementItem key={element.id} type={type} data={element} />
+            <ElementItem
+              key={element.id}
+              className="h-20"
+              data={{ type, ...element }}
+            />
           ))}
         </div>
       </CardContent>
+      <ElementItemDragOverlay />
     </TabsContent>
   );
 };
