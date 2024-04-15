@@ -5,7 +5,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { elements } from "./shape-elements.json";
+import { ElementItem } from "./element-item";
+import { type, elements } from "./shape-elements.json";
 
 export const ShapePanel: React.FC<{ name: string }> = ({ name }) => {
   return (
@@ -18,13 +19,8 @@ export const ShapePanel: React.FC<{ name: string }> = ({ name }) => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 place-content-stretch">
-          {elements.map(({ id, name, src }) => (
-            <div
-              key={id + name}
-              className="h-20 flex items-center justify-center rounded-sm hover:bg-slate-100"
-            >
-              <img src={src} alt={name} />
-            </div>
+          {elements.map((element) => (
+            <ElementItem key={element.id} type={type} data={element} />
           ))}
         </div>
       </CardContent>

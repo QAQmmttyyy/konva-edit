@@ -7,8 +7,10 @@ export const StoreContextProvider = storeContext.Provider;
 
 export function useStore() {
   const store = useContext(storeContext);
+
   if (store == null) {
-    console.error("useStore must be use in provider. store value: ", store);
+    throw new Error(`useStore must be use in provider. store value: ${store}`);
   }
+
   return store;
 }

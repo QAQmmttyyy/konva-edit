@@ -1,8 +1,15 @@
-import { t, cast, IAnyStateTreeNode, Instance } from "mobx-state-tree";
+import {
+  t,
+  cast,
+  IAnyStateTreeNode,
+  Instance,
+  IAnyModelType,
+  SnapshotIn,
+} from "mobx-state-tree";
 import { nanoid } from "nanoid";
 import { forEveryChild } from "@/lib/utils";
 import { IPageSnapshotIn, Page } from "./page-model";
-import { INodeSnapshotIn, INodeInstance } from "./node-model";
+import { INodeInstance } from "./node-model";
 import { MODEL_TYPES_MAP } from "./group-model";
 
 export const Store = t
@@ -64,14 +71,16 @@ export const Store = t
         self.pages.splice(index, 1);
       }
     },
-    addElement(attrs: INodeSnapshotIn) {
+    addElement(attrs: SnapshotIn<IAnyModelType>) {
       const model = MODEL_TYPES_MAP[attrs.type as string];
       if (!model) {
         console.error("Can not find model with type " + attrs.type);
         return;
       }
 
-      const newElement = model.create(Object.assign({ id: nanoid(10) }, attrs));
+      const newElement = model.create(
+        Object.assign({}, attrs, { id: nanoid(10) })
+      );
 
       self.activePage.children.push(newElement);
       self.selectElements([newElement.id]);
