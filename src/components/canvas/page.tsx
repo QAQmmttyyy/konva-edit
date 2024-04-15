@@ -1,11 +1,12 @@
 import Konva from "konva";
-import { useRef } from "react";
+import { observer } from "mobx-react-lite";
+import { useLayoutEffect, useRef } from "react";
 import { Layer, Stage } from "react-konva";
 import { useStore } from "@/context/store-context";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 import { Droppable } from "../dnd/droppable";
 import { Element } from "./element";
-import { observer } from "mobx-react-lite";
+import { ISelectionBoxRef, SelectionBox } from "./selection-box";
 
 interface IPageProps {
   width: number;
@@ -16,8 +17,14 @@ const PAGE_DROPPABLE_ID = "page-drop-area";
 
 export const Page = observer<IPageProps>(({ width, height }) => {
   const store = useStore();
-
   const stageRef = useRef<Konva.Stage>(null);
+  const selectionBoxRef = useRef<ISelectionBoxRef>(null);
+
+  // Note: must attach nodes to konva transformer node here.
+  const selectedIds = store.selectedElementsIds.toJSON();
+  useLayoutEffect(() => {
+    selectionBoxRef.current?.nodes(selectedIds);
+  }, [selectedIds]);
 
   useDndMonitor({
     onDragEnd: (event: DragEndEvent) => {
@@ -48,6 +55,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
           {store?.activePage.children.map((child) => (
             <Element key={child.id} element={child} />
           ))}
+          <SelectionBox ref={selectionBoxRef} />
         </Layer>
       </Stage>
     </Droppable>
