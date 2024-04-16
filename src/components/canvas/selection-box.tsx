@@ -2,6 +2,7 @@ import Konva from "konva";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Transformer } from "react-konva";
 import { observer } from "mobx-react-lite";
+import colors from "tailwindcss/colors";
 
 export interface ISelectionBoxRef {
   nodes: (ids: string[]) => void;
@@ -29,7 +30,7 @@ export const SelectionBox = observer(
               transformer.getLayer()?.batchDraw();
             }
           },
-        };
+        } satisfies ISelectionBoxRef;
       },
       []
     );
@@ -37,13 +38,15 @@ export const SelectionBox = observer(
     return (
       <Transformer
         ref={transformerRef}
+        ignoreStroke
+        rotateAnchorOffset={30}
+        borderStroke={colors.sky[400]}
+        borderStrokeWidth={2}
+        anchorStroke={colors.sky[400]}
+        anchorStrokeWidth={2}
         anchorStyleFunc={(anchor) => {
           const _anchor = anchor as Konva.Rect;
-          // anchor is Konva.Rect instance
-          // you manually change its styling
           _anchor.cornerRadius(10);
-          // you also can set other properties
-          // e.g. you can set fillPatternImage to set icon to the anchor
         }}
       />
     );
