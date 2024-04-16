@@ -6,6 +6,7 @@ export const ShapeModel = NodeModel.named("Shape").props({
   y: 0,
   width: 0,
   height: 0,
+  rotation: 0,
 });
 
 export interface IShapeInstance extends Instance<typeof ShapeModel> {}

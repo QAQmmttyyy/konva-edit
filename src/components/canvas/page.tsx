@@ -7,6 +7,7 @@ import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 import { Droppable } from "../dnd/droppable";
 import { Element } from "./element";
 import { ISelectionBoxRef, SelectionBox } from "./selection-box";
+import { Highlighter, IHighlighterRef } from "./highlighter";
 
 interface IPageProps {
   width: number;
@@ -19,7 +20,9 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   const store = useStore();
   const stageRef = useRef<Konva.Stage>(null);
   const selectionBoxRef = useRef<ISelectionBoxRef>(null);
+  const highlighterRef = useRef<IHighlighterRef>(null);
 
+  // selection box
   // Note: must attach nodes to konva transformer node here.
   const selectedIds = store.selectedElementsIds.toJSON();
   useLayoutEffect(() => {
@@ -27,6 +30,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   }, [selectedIds]);
 
   useDndMonitor({
+    // drop to create element
     onDragEnd: (event: DragEndEvent) => {
       const { activatorEvent, active, over, delta } = event;
       const _activatorEvent = activatorEvent as PointerEvent;
@@ -50,11 +54,19 @@ export const Page = observer<IPageProps>(({ width, height }) => {
 
   return (
     <Droppable args={{ id: PAGE_DROPPABLE_ID }}>
-      <Stage ref={stageRef} width={width} height={height}>
+      <Stage
+        ref={stageRef}
+        width={width}
+        height={height}
+        onPointerMove={(ev) => {
+          highlighterRef.current?.highlight(ev);
+        }}
+      >
         <Layer>
           {store?.activePage.children.map((child) => (
             <Element key={child.id} element={child} />
           ))}
+          <Highlighter ref={highlighterRef} />
           <SelectionBox ref={selectionBoxRef} />
         </Layer>
       </Stage>

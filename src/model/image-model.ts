@@ -1,4 +1,4 @@
-import { Instance } from "mobx-state-tree";
+import { Instance, SnapshotIn } from "mobx-state-tree";
 import { ShapeModel } from "./shape-model";
 
 export const ImageModel = ShapeModel.named("Image").props({
@@ -7,3 +7,4 @@ export const ImageModel = ShapeModel.named("Image").props({
 });
 
 export interface IImageInstance extends Instance<typeof ImageModel> {}
+export interface IImageSnapshotIn extends SnapshotIn<typeof ImageModel> {}

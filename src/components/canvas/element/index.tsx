@@ -24,7 +24,7 @@ interface IGroupElementProps {
 
 const GroupElement = observer<IGroupElementProps>(({ element }) => {
   return (
-    <Group>
+    <Group name="element">
       {element.children.map((child) => (
         <Element key={child.id} element={child} />
       ))}
