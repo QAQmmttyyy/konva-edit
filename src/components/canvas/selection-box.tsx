@@ -23,8 +23,6 @@ export const SelectionBox = observer(
               const nodes = ids
                 .map((id) => stage?.findOne("#" + id))
                 .filter((node): node is Konva.Node => !!node);
-              console.log("nodes", nodes);
-              console.log("transformer", transformer.attrs);
 
               transformer.nodes(nodes);
               transformer.getLayer()?.batchDraw();

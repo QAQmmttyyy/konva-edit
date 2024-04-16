@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Image } from "react-konva";
 import useImage from "use-image";
 import { IImageInstance, IImageSnapshotIn } from "@/model/image-model";
+import { ELEMENT_NODE_NAME } from "@/lib/constants";
 
 interface IImageProps {
   element: IImageInstance;
@@ -16,7 +17,7 @@ export const ImageElement = observer<IImageProps>(({ element }) => {
   return (
     <Image
       id={id}
-      name="element"
+      name={ELEMENT_NODE_NAME}
       image={img}
       x={x}
       y={y}

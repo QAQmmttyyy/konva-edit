@@ -3,6 +3,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Rect } from "react-konva";
 import colors from "tailwindcss/colors";
 import { useStore } from "@/context/store-context";
+import { ELEMENT_NODE_NAME } from "@/lib/constants";
 
 export interface IHighlighterRef {
   highlight: (ev: Konva.KonvaPointerEvent) => void;
@@ -21,7 +22,7 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
           const target = ev.target;
           // selected element no need highlight
           if (
-            target.hasName("element") &&
+            target.hasName(ELEMENT_NODE_NAME) &&
             store.selectedElementsIds.includes(target.id())
           ) {
             return;
@@ -29,7 +30,7 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
 
           // from one element to another
           // or firstly enter one element
-          if (prevTargetRef.current !== target && target.hasName("element")) {
+          if (prevTargetRef.current !== target && target.hasName(ELEMENT_NODE_NAME)) {
             prevTargetRef.current = target;
             setConfig({
               x: target.x(),
@@ -41,7 +42,7 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
             });
           }
           // just leave one element
-          else if (prevTargetRef.current && !target.hasName("element")) {
+          else if (prevTargetRef.current && !target.hasName(ELEMENT_NODE_NAME)) {
             prevTargetRef.current = undefined;
             setConfig({ visible: false });
           }
