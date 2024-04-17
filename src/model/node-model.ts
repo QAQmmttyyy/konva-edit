@@ -1,11 +1,4 @@
-import {
-  SnapshotIn,
-  Instance,
-  t,
-  getParentOfType,
-  IAnyModelType,
-} from "mobx-state-tree";
-import { Page } from "./page-model";
+import { t, SnapshotIn, Instance, IAnyModelType } from "mobx-state-tree";
 
 export const NodeModel = t
   .model("Node", {
@@ -13,11 +6,6 @@ export const NodeModel = t
     type: "none",
     name: "",
   })
-  .views((self) => ({
-    get page() {
-      return getParentOfType(self, Page);
-    },
-  }))
   .actions((self) => ({
     set(data: SnapshotIn<IAnyModelType>) {
       Object.assign(self, data);

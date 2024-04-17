@@ -1,14 +1,14 @@
-import Konva from 'konva';
-import { observer } from 'mobx-react-lite';
-import { useLayoutEffect, useRef } from 'react';
-import { Layer, Stage } from 'react-konva';
-import { useStore } from '@/context/store-context';
-import { ELEMENT_NODE_NAME } from '@/lib/constants';
-import { DragEndEvent, useDndMonitor } from '@dnd-kit/core';
-import { Droppable } from '../dnd/droppable';
-import { Element } from './element';
-import { Highlighter, IHighlighterRef } from './highlighter';
-import { ISelectionBoxRef, SelectionBox } from './selection-box';
+import Konva from "konva";
+import { observer } from "mobx-react-lite";
+import { useLayoutEffect, useRef } from "react";
+import { Layer, Stage } from "react-konva";
+import { useStore } from "@/context/store-context";
+import { ELEMENT_NODE_NAME } from "@/lib/constants";
+import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
+import { Droppable } from "../dnd/droppable";
+import { Element } from "./element";
+import { Highlighter, IHighlighterRef } from "./highlighter";
+import { ISelectionBoxRef, SelectionBox } from "./selection-box";
 
 interface IPageProps {
   width: number;

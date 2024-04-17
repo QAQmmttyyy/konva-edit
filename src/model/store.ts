@@ -1,16 +1,16 @@
 import {
-  t,
   cast,
+  IAnyModelType,
   IAnyStateTreeNode,
   Instance,
-  IAnyModelType,
   SnapshotIn,
+  t,
 } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { forEveryChild } from "@/lib/utils";
-import { IPageSnapshotIn, Page } from "./page-model";
-import { INodeInstance } from "./node-model";
 import { MODEL_TYPES_MAP } from "./group-model";
+import { INodeInstance } from "./node-model";
+import { IPageSnapshotIn, Page } from "./page-model";
+import { forEveryChild } from "./utils";
 
 export const Store = t
   .model("Store", {
@@ -52,7 +52,11 @@ export const Store = t
       const idsToSelect = ids
         .map((id) => self.getElementById(id))
         .filter((item): item is INodeInstance => !!item)
-        .sort((a, b) => a.page.children.indexOf(a) - a.page.children.indexOf(b))
+        .sort(
+          (a, b) =>
+            self.activePage.children.indexOf(a) -
+            self.activePage.children.indexOf(b)
+        )
         .map((item) => item.id);
 
       self.selectedElementsIds = cast(idsToSelect);
