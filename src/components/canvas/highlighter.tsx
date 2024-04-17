@@ -7,6 +7,7 @@ import { ELEMENT_NODE_NAME } from "@/lib/constants";
 
 export interface IHighlighterRef {
   highlight: (ev: Konva.KonvaPointerEvent) => void;
+  hide: () => void;
 }
 
 export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
@@ -30,7 +31,10 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
 
           // from one element to another
           // or firstly enter one element
-          if (prevTargetRef.current !== target && target.hasName(ELEMENT_NODE_NAME)) {
+          if (
+            prevTargetRef.current !== target &&
+            target.hasName(ELEMENT_NODE_NAME)
+          ) {
             prevTargetRef.current = target;
             setConfig({
               x: target.x(),
@@ -42,10 +46,17 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
             });
           }
           // just leave one element
-          else if (prevTargetRef.current && !target.hasName(ELEMENT_NODE_NAME)) {
+          else if (
+            prevTargetRef.current &&
+            !target.hasName(ELEMENT_NODE_NAME)
+          ) {
             prevTargetRef.current = undefined;
             setConfig({ visible: false });
           }
+        },
+        hide: () => {
+          prevTargetRef.current = undefined;
+          setConfig({ visible: false });
         },
       } satisfies IHighlighterRef;
     },

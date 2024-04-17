@@ -1,13 +1,14 @@
-import Konva from "konva";
-import { observer } from "mobx-react-lite";
-import { useLayoutEffect, useRef } from "react";
-import { Layer, Stage } from "react-konva";
-import { useStore } from "@/context/store-context";
-import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
-import { Droppable } from "../dnd/droppable";
-import { Element } from "./element";
-import { ISelectionBoxRef, SelectionBox } from "./selection-box";
-import { Highlighter, IHighlighterRef } from "./highlighter";
+import Konva from 'konva';
+import { observer } from 'mobx-react-lite';
+import { useLayoutEffect, useRef } from 'react';
+import { Layer, Stage } from 'react-konva';
+import { useStore } from '@/context/store-context';
+import { ELEMENT_NODE_NAME } from '@/lib/constants';
+import { DragEndEvent, useDndMonitor } from '@dnd-kit/core';
+import { Droppable } from '../dnd/droppable';
+import { Element } from './element';
+import { Highlighter, IHighlighterRef } from './highlighter';
+import { ISelectionBoxRef, SelectionBox } from './selection-box';
 
 interface IPageProps {
   width: number;
@@ -27,6 +28,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   const selectedIds = store.selectedElementsIds.toJSON();
   useLayoutEffect(() => {
     selectionBoxRef.current?.nodes(selectedIds);
+    highlighterRef.current?.hide();
   }, [selectedIds]);
 
   useDndMonitor({
@@ -38,8 +40,6 @@ export const Page = observer<IPageProps>(({ width, height }) => {
       _activatorEvent.preventDefault();
 
       if (over?.id === PAGE_DROPPABLE_ID) {
-        console.log("active element data", active.data.current);
-
         const pointerPositionInStage = {
           x: _activatorEvent.clientX + delta.x - over.rect.left,
           y: _activatorEvent.clientY + delta.y - over.rect.top,
@@ -58,6 +58,38 @@ export const Page = observer<IPageProps>(({ width, height }) => {
         ref={stageRef}
         width={width}
         height={height}
+        onPointerDown={(ev) => {
+          // if click on empty area - remove all selections
+          if (ev.target === ev.target.getStage()) {
+            store.selectElements([]);
+            return;
+          }
+
+          // do nothing if clicked NOT on our rectangles
+          if (!ev.target.hasName(ELEMENT_NODE_NAME)) {
+            return;
+          }
+
+          // do we pressed shift or ctrl?
+          const shiftPressed = ev.evt.shiftKey;
+          const isSelected = store.selectedElementsIds.includes(ev.target.id());
+
+          if (!shiftPressed && !isSelected) {
+            // if no key pressed and the node is not selected
+            // select just one
+            store.selectElements([ev.target.id()]);
+          } else if (shiftPressed && isSelected) {
+            // if we pressed keys and node was selected
+            // we need to remove it from selection:
+            store.unselectElements([ev.target.id()]);
+          } else if (shiftPressed && !isSelected) {
+            // add the node into selection
+            store.selectElements([
+              ...store.selectedElementsIds,
+              ev.target.id(),
+            ]);
+          }
+        }}
         onPointerMove={(ev) => {
           highlighterRef.current?.highlight(ev);
         }}

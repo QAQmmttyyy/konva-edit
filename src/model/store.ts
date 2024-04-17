@@ -57,6 +57,11 @@ export const Store = t
 
       self.selectedElementsIds = cast(idsToSelect);
     },
+    unselectElements(ids: string[]) {
+      self.selectedElementsIds = cast(
+        self.selectedElementsIds.filter((id) => !ids.includes(id))
+      );
+    },
   }))
   .actions((self) => ({
     addPage(attrs?: IPageSnapshotIn) {
