@@ -1,19 +1,21 @@
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Group } from "react-konva";
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
 import { IGroupInstance } from "@/model/group-model";
 import { INodeInstance } from "@/model/node-model";
-import { ImageElement } from "./image-element";
-import { ElementInstanceType } from "./type";
+import { ELEMENT_REGISTRY } from "@/lib/element-register";
 
 interface IElementProps {
   element: INodeInstance;
 }
 
+export type ElementComponentType = FC<IElementProps>;
+
 export const Element = observer<IElementProps>(({ element }) => {
-  const Comp = ELEMENT_TYPES_MAP[element.type];
+  const Comp = ELEMENT_REGISTRY[element.type]?.component;
   return Comp ? (
-    <Comp element={element as ElementInstanceType} />
+    <Comp element={element} />
   ) : (
     (console.error("Can not find component for " + element.type), null)
   );
@@ -23,7 +25,7 @@ interface IGroupElementProps {
   element: IGroupInstance;
 }
 
-const GroupElement = observer<IGroupElementProps>(({ element }) => {
+export const GroupElement = observer<IGroupElementProps>(({ element }) => {
   return (
     <Group name={ELEMENT_NODE_NAME}>
       {element.children.map((child) => (
@@ -32,10 +34,3 @@ const GroupElement = observer<IGroupElementProps>(({ element }) => {
     </Group>
   );
 });
-
-type ElementCompType = typeof GroupElement | typeof ImageElement;
-
-const ELEMENT_TYPES_MAP: Record<string, ElementCompType> = {
-  group: GroupElement,
-  image: ImageElement,
-};

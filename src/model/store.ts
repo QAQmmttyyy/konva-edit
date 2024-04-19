@@ -7,7 +7,8 @@ import {
   t,
 } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { MODEL_TYPES_MAP } from "./group-model";
+import { ELEMENT_REGISTRY } from "@/lib/element-register";
+import { ELEMENT_TYPE } from "@/lib/constants";
 import { INodeInstance } from "./node-model";
 import { IPageSnapshotIn, Page } from "./page-model";
 import { forEveryChild } from "./utils";
@@ -25,11 +26,13 @@ export const Store = t
         self.pages[0]
       );
     },
+  }))
+  .views((self) => ({
     find(
       callback: (node: IAnyStateTreeNode) => boolean
     ): INodeInstance | undefined {
       let result: INodeInstance | undefined;
-      forEveryChild({ children: self.pages }, (node) => {
+      forEveryChild({ children: self.activePage.children }, (node) => {
         if (!result && callback(node)) {
           result = node;
           return true;
@@ -43,6 +46,22 @@ export const Store = t
   .views((self) => ({
     getElementById: (id: string) =>
       self.find((node: INodeInstance) => node.id === id),
+
+    get selectedElements() {
+      const result: INodeInstance[] = [];
+      forEveryChild({ children: self.activePage.children }, (node) => {
+        if (
+          result.length < self.selectedElementsIds.length &&
+          self.selectedElementsIds.includes(node.id)
+        ) {
+          result.push(node);
+          return true;
+        }
+        return false;
+      });
+
+      return result;
+    },
   }))
   .actions((self) => ({
     selectPage(id: string) {
@@ -81,13 +100,15 @@ export const Store = t
       }
     },
     addElement(attrs: SnapshotIn<IAnyModelType>) {
-      const model = MODEL_TYPES_MAP[attrs.type as string];
-      if (!model) {
-        console.error("Can not find model with type " + attrs.type);
+      const elementOptions = ELEMENT_REGISTRY[attrs.type as ELEMENT_TYPE];
+      if (!elementOptions) {
+        console.error(
+          "Can not find element registry info with type " + attrs.type
+        );
         return;
       }
 
-      const newElement = model.create(
+      const newElement = elementOptions.mstModel.create(
         Object.assign({}, attrs, { id: nanoid(10) })
       );
 

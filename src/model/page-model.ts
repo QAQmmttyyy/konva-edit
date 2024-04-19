@@ -1,9 +1,9 @@
 import { Instance, t, SnapshotIn } from "mobx-state-tree";
-import { ElementModelTypes } from "./group-model";
+import { childrenType } from "./group-model";
 
 export const Page = t.model("Page", {
   id: t.identifier,
-  children: t.array(t.late(() => ElementModelTypes)),
+  children: t.array(childrenType),
 });
 
 export interface IPageInstance extends Instance<typeof Page> {}

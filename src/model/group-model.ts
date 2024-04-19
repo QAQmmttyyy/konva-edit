@@ -1,33 +1,16 @@
-import {
-  t,
-  IAnyModelType,
-  SnapshotOrInstance,
-  IAnyType,
-  Instance,
-} from "mobx-state-tree";
+import { IAnyType, Instance, t } from "mobx-state-tree";
 import { NodeModel } from "./node-model";
 import { ImageModel } from "./image-model";
 
-export const ElementModelTypes: IAnyType = t.union(
-  {
-    dispatcher: (e: SnapshotOrInstance<typeof NodeModel>) => {
-      const t = MODEL_TYPES_MAP[e.type!];
-      if (!t) throw new Error(`Unknown element type: "${e.type}"`);
-      return t;
-    },
-  },
+// when add new element model, you need add it to this union.
+export const childrenType: IAnyType = t.union(
   t.late(() => GroupModel),
   ImageModel
 );
 
 export const GroupModel = NodeModel.named("Group").props({
   type: "group",
-  children: t.array(ElementModelTypes),
+  children: t.array(childrenType),
 });
-
-export const MODEL_TYPES_MAP: Record<string, IAnyModelType> = {
-  group: GroupModel,
-  image: ImageModel,
-};
 
 export interface IGroupInstance extends Instance<typeof GroupModel> {}

@@ -4,6 +4,7 @@ import { addMiddleware, onSnapshot } from "mobx-state-tree";
 import { actionLogger } from "mst-middlewares";
 import { StoreContextProvider } from "./context/store-context.ts";
 import { createStore } from "./model/store.ts";
+import { registerAllElements } from "./lib/element-register.ts";
 import App from "./App.tsx";
 import "./index.css";
 
@@ -29,4 +30,5 @@ export function createApp(container: string) {
   return;
 }
 
+registerAllElements();
 createApp("root");
