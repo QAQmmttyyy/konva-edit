@@ -39,6 +39,7 @@ export interface InputOptions {
    * Number field type validation minimum accepted input
    */
   min?: number;
+  normalize?: (value: unknown) => unknown;
 }
 
 interface IElementOptions {
@@ -58,6 +59,15 @@ export function registerAllElements() {
   registerElement(ELEMENT_TYPE.image, {
     mstModel: ImageModel,
     component: ImageElement as FC,
+    inputs: [
+      {
+        propName: "x",
+        type: INPUT_TYPE.number,
+        normalize: (value) => {
+          return Math.round(Number(value) || 0);
+        },
+      },
+    ],
   });
   registerElement(ELEMENT_TYPE.group, {
     mstModel: GroupModel,

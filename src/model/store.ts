@@ -50,12 +50,12 @@ export const Store = t
     get selectedElements() {
       const result: INodeInstance[] = [];
       forEveryChild({ children: self.activePage.children }, (node) => {
-        if (
-          result.length < self.selectedElementsIds.length &&
-          self.selectedElementsIds.includes(node.id)
-        ) {
-          result.push(node);
+        if (result.length === self.selectedElementsIds.length) {
           return true;
+        }
+
+        if (self.selectedElementsIds.includes(node.id)) {
+          result.push(node);
         }
         return false;
       });

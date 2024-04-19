@@ -60,7 +60,10 @@ export const Page = observer<IPageProps>(({ width, height }) => {
         height={height}
         onPointerDown={(ev) => {
           // if click on empty area - remove all selections
-          if (ev.target === ev.target.getStage()) {
+          if (
+            ev.target === ev.target.getStage() &&
+            store.selectedElementsIds.length > 0
+          ) {
             store.selectElements([]);
             return;
           }
