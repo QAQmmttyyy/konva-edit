@@ -9,15 +9,17 @@ import {
 import { nanoid } from "nanoid";
 import { ELEMENT_REGISTRY } from "@/lib/element-register";
 import { ELEMENT_TYPE } from "@/lib/constants";
+import { BindableStateModel } from "./bindable-state-model";
 import { INodeInstance } from "./node-model";
 import { IPageSnapshotIn, Page } from "./page-model";
 import { forEveryChild } from "./utils";
 
 export const Store = t
   .model("Store", {
+    _activePageId: "",
     pages: t.array(Page),
     selectedElementsIds: t.array(t.string),
-    _activePageId: "",
+    bindableState: t.optional(BindableStateModel, {}),
   })
   .views((self) => ({
     get activePage() {
