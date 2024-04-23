@@ -25,13 +25,13 @@ export const PropertyPanel = observer(() => {
         <CardTitle className="text-xl">Property</CardTitle>
       </CardHeader>
       <ScrollArea className="w-full flex-1">
-        <CardContent className="grid gap-2">
+        <CardContent className="grid gap-3">
           {showPanel &&
             ELEMENT_REGISTRY[selectedElement.type].inputs?.map(
               (inputOptions) => {
                 return (
                   <PropertyInput
-                    key={inputOptions.propName}
+                    key={inputOptions.name}
                     element={selectedElement}
                     options={inputOptions}
                   />

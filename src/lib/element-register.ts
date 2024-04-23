@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { ChangeEvent, FC } from "react";
 import { IAnyModelType } from "mobx-state-tree";
 import {
   ElementComponentType,
@@ -7,46 +7,38 @@ import {
 import { ImageElement } from "@/components/canvas/element/image-element";
 import { GroupModel } from "@/model/group-model";
 import { ImageModel } from "@/model/image-model";
+import { INodeInstance } from "@/model/node-model";
 import { ELEMENT_TYPE, INPUT_TYPE } from "./constants";
 
-export interface InputOptions {
+/**
+ * Can be expanded on demand
+ */
+export interface IInputOptions {
   /** This is the name of the mst-model prop this input represents */
-  propName: string;
+  name: string;
   /**
-   * The type of input to use, such as 'text'
+   * The type of input to use, such as 'text', inspired by: builder.io
    *
-   * See all available inputs [here](https://www.builder.io/c/docs/custom-components-input-types)
-   * and you can create your own custom input types and associated editor UIs with [plugins](https://www.builder.io/c/docs/extending/plugins)
+   * [here](https://www.builder.io/c/docs/custom-components-input-types)
    */
   type: INPUT_TYPE;
 
   /** A friendlier name to show in the UI if the component prop name is not ideal for end users */
   friendlyName?: string;
-  /**
-   * Additional text to render in the UI to give guidance on how to use this
-   *
-   * @example
-   * ```js
-   * helperText: 'Be sure to use a proper URL, starting with "https://"'
-   * ```
-   */
-  helperText?: string;
-  /**
-   * Number field type validation maximum accepted input
-   */
-  max?: number;
-  /**
-   * Number field type validation minimum accepted input
-   */
-  min?: number;
+  bindable?: boolean;
   normalize?: (value: unknown) => unknown;
+  onChange?: (
+    ev: ChangeEvent<HTMLInputElement>,
+    element: INodeInstance,
+    options: IInputOptions
+  ) => void;
 }
 
 interface IElementOptions {
   mstModel: IAnyModelType;
   component: ElementComponentType;
   // define input options in the properties panel user interface (UI)
-  inputs?: InputOptions[];
+  inputs?: IInputOptions[];
 }
 
 export const ELEMENT_REGISTRY: { [key: string]: IElementOptions } = {};
@@ -60,11 +52,24 @@ export function registerAllElements() {
     mstModel: ImageModel,
     component: ImageElement as FC,
     inputs: [
+      // example
       {
-        propName: "x",
+        name: "name",
+        type: INPUT_TYPE.text,
+        bindable: true,
+        onChange: (ev, element, options) => {
+          element.set({ [options.name]: ev.target.value });
+        },
+      },
+      {
+        name: "width",
         type: INPUT_TYPE.number,
+        onChange: (ev, element, options) => {
+          const { name, normalize } = options;
+          element.set({ [name]: normalize!(ev.target.value) });
+        },
         normalize: (value) => {
-          return Math.round(Number(value) || 0);
+          return Math.round(Number(value)) || 0;
         },
       },
     ],

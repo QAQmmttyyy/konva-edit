@@ -6,5 +6,6 @@ export enum ELEMENT_TYPE {
 }
 
 export enum INPUT_TYPE {
+  text = "text",
   number = "number",
 }

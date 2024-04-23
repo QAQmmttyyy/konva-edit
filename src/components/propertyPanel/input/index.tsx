@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { INPUT_TYPE } from "@/lib/constants";
-import { NumberInput } from "./number-input";
+import { BasicInput } from "./basic-input";
 import { IPropertyInputProps } from "./type";
 
 const INPUT_MAP: { [key: string]: FC<IPropertyInputProps> } = {
-  [INPUT_TYPE.number]: NumberInput,
+  [INPUT_TYPE.number]: BasicInput,
+  [INPUT_TYPE.text]: BasicInput,
 };
 
 export const PropertyInput: FC<IPropertyInputProps> = ({
