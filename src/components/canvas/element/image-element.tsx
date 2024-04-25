@@ -11,7 +11,8 @@ interface IImageProps {
 }
 
 export const ImageElement = observer<IImageProps>(({ element }) => {
-  const { id, src, x, y, width, height, rotation } = element;
+  const { id, src, x, y, width, height, rotation } =
+    element.processedSelf as IImageInstance;
 
   const [img, status] = useImage(src);
 
