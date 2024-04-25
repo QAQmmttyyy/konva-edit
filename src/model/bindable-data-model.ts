@@ -5,7 +5,7 @@ interface IBindableStateModelProperties {
   [key: string]: IAnyType;
 }
 
-export const BindableStateModel = t
+export const BindableDataModel = t
   .model<IBindableStateModelProperties>("BindableDataSource")
   .views((self) => ({
     getPathValue(path: string) {
@@ -18,5 +18,5 @@ export const BindableStateModel = t
     },
   }));
 
-export interface IBindableStateInstance
-  extends Instance<typeof BindableStateModel> {}
+export interface IBindableDataInstance
+  extends Instance<typeof BindableDataModel> {}
