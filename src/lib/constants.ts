@@ -6,6 +6,10 @@ export enum ELEMENT_TYPE {
 }
 
 export enum INPUT_TYPE {
+  // basic
   text = "text",
   number = "number",
+  select = "select",
+  // custom
+  stateSelect = "stateSelect",
 }

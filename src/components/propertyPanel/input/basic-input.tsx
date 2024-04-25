@@ -4,15 +4,21 @@ import { Input } from "@/components/ui/input";
 import { withInputWrapper } from "./input-wrapper";
 import { IPropertyInputProps } from "./type";
 
-const InnerBasicInput = observer<IPropertyInputProps>(
-  ({ element, options }) => {
-    const { name, type, onChange: handleChange, normalize } = options;
+export const BasicInput = withInputWrapper(
+  observer<IPropertyInputProps>(({ element, options }) => {
+    const {
+      name,
+      type,
+      placeholder,
+      onChange: handleChange,
+      normalize,
+    } = options;
     const value =
       element.processedSelf[name as keyof typeof element.processedSelf];
 
     const onChange = useCallback(
       (ev: ChangeEvent<HTMLInputElement>) => {
-        handleChange?.(ev, element, options);
+        handleChange?.(ev.target.value, element, options);
       },
       [element, handleChange, options]
     );
@@ -21,11 +27,10 @@ const InnerBasicInput = observer<IPropertyInputProps>(
       <Input
         type={type}
         id={name}
+        placeholder={placeholder}
         onChange={onChange}
         value={normalize ? normalize(value) : value}
       />
     );
-  }
+  })
 );
-
-export const BasicInput = withInputWrapper(InnerBasicInput);

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from "react";
+import { FC } from "react";
 import { IAnyModelType } from "mobx-state-tree";
 import {
   ElementComponentType,
@@ -25,13 +25,18 @@ export interface IInputOptions {
 
   /** A friendlier name to show in the UI if the component prop name is not ideal for end users */
   friendlyName?: string;
+  placeholder?: string;
   bindable?: boolean;
   normalize?: (value: unknown) => unknown;
   onChange?: (
-    ev: ChangeEvent<HTMLInputElement>,
+    value: unknown,
     element: INodeInstance,
-    options: IInputOptions
+    inputOptions: IInputOptions
   ) => void;
+  /**
+   * use with select type
+   */
+  selectOptions?: string[];
 }
 
 interface IElementOptions {
@@ -54,19 +59,31 @@ export function registerAllElements() {
     inputs: [
       // example
       {
+        name: "currentState",
+        type: INPUT_TYPE.stateSelect,
+        placeholder: 'Select a state',
+        bindable: true,
+        selectOptions: ["none"],
+        onChange: (value, element) => {
+          if (typeof value === "string") {
+            element.setCurrentState(value === "none" ? "" : value);
+          }
+        },
+      },
+      {
         name: "name",
         type: INPUT_TYPE.text,
         bindable: true,
-        onChange: (ev, element, options) => {
-          element.set({ [options.name]: ev.target.value });
+        onChange: (value, element, inputOptions) => {
+          element.set({ [inputOptions.name]: value });
         },
       },
       {
         name: "width",
         type: INPUT_TYPE.number,
-        onChange: (ev, element, options) => {
-          const { name, normalize } = options;
-          element.set({ [name]: normalize!(ev.target.value) });
+        onChange: (value, element, inputOptions) => {
+          const { name, normalize } = inputOptions;
+          element.set({ [name]: normalize!(value) });
         },
         normalize: (value) => {
           return Math.round(Number(value)) || 0;

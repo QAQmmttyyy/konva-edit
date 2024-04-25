@@ -15,7 +15,7 @@ const InputWrapper: FC<PropsWithChildren<IPropertyInputProps>> = ({
 
   return (
     <div className="grid w-full gap-1.5">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center min-h-7">
         <Label htmlFor={name}>
           {friendlyName ?? camelCaseToSentenceCase(name)}
         </Label>
