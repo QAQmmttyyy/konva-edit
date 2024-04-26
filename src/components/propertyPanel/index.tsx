@@ -13,12 +13,13 @@ export const PropertyPanel = observer(() => {
   const selectedElement = selectedElements[0];
   return (
     <Card
+      id="property-panel"
       className={cn(
         {
           visible: showPanel,
           invisible: !showPanel,
         },
-        "flex flex-col w-64 absolute top-4 right-4 h-[calc(100%-2rem)]"
+        "flex flex-col w-64 absolute top-14 right-4 h-[calc(100%-4.5rem)]"
       )}
     >
       <CardHeader>

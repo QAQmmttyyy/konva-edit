@@ -13,6 +13,8 @@ interface IElementProps {
 export type ElementComponentType = FC<IElementProps>;
 
 export const Element = observer<IElementProps>(({ element }) => {
+  console.log("rendering element", element.type);
+
   const Comp = ELEMENT_REGISTRY[element.type]?.component;
   return Comp ? (
     <Comp element={element} />

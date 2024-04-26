@@ -21,19 +21,6 @@ const commonPropertiesDeclarationBetweenModelAndState = {
   bindings: t.maybe(t.map(t.string)),
 };
 
-type IStateDataModelProperties =
-  typeof commonPropertiesDeclarationBetweenModelAndState & {
-    [key: string]: IAnyType;
-  };
-const StateDataModel = t.model<IStateDataModelProperties>("StateDataModel", {
-  ...commonPropertiesDeclarationBetweenModelAndState,
-});
-
-interface IStatesModelProperties {
-  [state: string]: typeof StateDataModel;
-}
-const StatesModel = t.model<IStatesModelProperties>("StatesModel");
-
 export const NodeModel = t
   .model("Node", {
     id: t.identifier,
@@ -108,3 +95,16 @@ export const NodeModel = t
 
 export interface INodeInstance extends Instance<typeof NodeModel> {}
 export interface INodeSnapshotIn extends SnapshotIn<typeof NodeModel> {}
+
+type IStateDataModelProperties =
+  typeof commonPropertiesDeclarationBetweenModelAndState & {
+    [key: string]: IAnyType;
+  };
+const StateDataModel = t.model<IStateDataModelProperties>("StateDataModel", {
+  ...commonPropertiesDeclarationBetweenModelAndState,
+});
+
+interface IStatesModelProperties {
+  [state: string]: typeof StateDataModel;
+}
+const StatesModel = t.model<IStatesModelProperties>("StatesModel");

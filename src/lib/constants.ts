@@ -1,8 +1,9 @@
 export const ELEMENT_NODE_NAME = "element";
 
 export enum ELEMENT_TYPE {
-  image = "image",
   group = "group",
+  image = "image",
+  line = "line",
 }
 
 export enum INPUT_TYPE {
@@ -12,4 +13,12 @@ export enum INPUT_TYPE {
   select = "select",
   // custom
   stateSelect = "stateSelect",
+}
+
+export enum TOOL_MODE {
+  select = "select",
+  rect = "rect",
+  circle = "circle",
+  line = "line",
+  text = "text",
 }

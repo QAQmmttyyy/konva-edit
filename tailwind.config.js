@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -17,8 +17,9 @@ module.exports = {
       },
     },
     data: {
-      ov: 'orientation=vertical',
-      oh: 'orientation=horizontal',
+      ov: "orientation=vertical",
+      oh: "orientation=horizontal",
+      selected: "state=selected",
     },
     extend: {
       keyframes: {
@@ -38,4 +39,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

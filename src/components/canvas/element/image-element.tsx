@@ -6,11 +6,11 @@ import useImage from "use-image";
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
 import { IImageInstance, IImageSnapshotIn } from "@/model/image-model";
 
-interface IImageProps {
+interface IImageElementProps {
   element: IImageInstance;
 }
 
-export const ImageElement = observer<IImageProps>(({ element }) => {
+export const ImageElement = observer<IImageElementProps>(({ element }) => {
   const { id, src, x, y, width, height, rotation } =
     element.processedSelf as IImageInstance;
 

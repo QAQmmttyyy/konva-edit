@@ -34,7 +34,7 @@ export const Workspace = () => {
   }, []);
 
   return (
-    <div ref={workspaceRef} id="workspace" className="h-full w-full flex-1">
+    <div ref={workspaceRef} id="workspace" className="h-full w-full">
       <Page width={size.width} height={size.height} />
     </div>
   );

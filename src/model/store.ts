@@ -7,12 +7,14 @@ import {
   t,
 } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { ELEMENT_REGISTRY } from "@/lib/element-register";
-import { ELEMENT_TYPE } from "@/lib/constants";
+
+import { TOOL_MODE } from "@/lib/constants";
+
 import { BindableDataModel } from "./bindable-data-model";
+import { childrenType } from "./group-model";
+import { createElement, forEveryChild } from "./helper";
 import { INodeInstance } from "./node-model";
 import { IPageSnapshotIn, Page } from "./page-model";
-import { forEveryChild } from "./utils";
 
 export const Store = t
   .model("Store", {
@@ -20,6 +22,8 @@ export const Store = t
     pages: t.array(Page),
     selectedElementsIds: t.array(t.string),
     bindableData: t.optional(BindableDataModel, {}),
+    toolMode: TOOL_MODE.select,
+    tempElement: t.maybe(childrenType), // painting element
   })
   .views((self) => ({
     get activePage() {
@@ -101,21 +105,29 @@ export const Store = t
         self.pages.splice(index, 1);
       }
     },
-    addElement(attrs: SnapshotIn<IAnyModelType>) {
-      const elementOptions = ELEMENT_REGISTRY[attrs.type as ELEMENT_TYPE];
-      if (!elementOptions) {
-        console.error(
-          "Can not find element registry info with type " + attrs.type
-        );
-        return;
-      }
 
-      const newElement = elementOptions.mstModel.create(
-        Object.assign({}, attrs, { id: nanoid(10) })
-      );
+    addElement(attrs: SnapshotIn<IAnyModelType>) {
+      const newElement = createElement(attrs);
 
       self.activePage.children.push(newElement);
       self.selectElements([newElement.id]);
+    },
+
+    setToolMode(mode: TOOL_MODE) {
+      self.toolMode = mode;
+    },
+    resetToolMode() {
+      self.toolMode = TOOL_MODE.select;
+    },
+    setTempElement(attrs: SnapshotIn<IAnyModelType>) {
+      self.tempElement = createElement(attrs);
+    },
+    unsetTempElement() {
+      self.tempElement = null;
+    },
+    endUsingTool() {
+      self.tempElement = undefined;
+      self.toolMode = TOOL_MODE.select;
     },
   }));
 
