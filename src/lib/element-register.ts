@@ -109,6 +109,28 @@ const COMMON_INPUT_OPTIONS: IInputOptions[] = [
     },
   },
   {
+    name: "x",
+    type: INPUT_TYPE.number,
+    onChange: (value, element, inputOptions) => {
+      const { name, normalize } = inputOptions;
+      element.set({ [name]: normalize!(value) });
+    },
+    normalize: (value) => {
+      return Math.round(Number(value)) || 0;
+    },
+  },
+  {
+    name: "y",
+    type: INPUT_TYPE.number,
+    onChange: (value, element, inputOptions) => {
+      const { name, normalize } = inputOptions;
+      element.set({ [name]: normalize!(value) });
+    },
+    normalize: (value) => {
+      return Math.round(Number(value)) || 0;
+    },
+  },
+  {
     name: "width",
     type: INPUT_TYPE.number,
     onChange: (value, element, inputOptions) => {

@@ -36,7 +36,7 @@ export const ImageElement = observer<IImageElementProps>(({ element }) => {
       rotation={rotation}
       onDragEnd={(ev) => {
         const pos = ev.target.position();
-        element.set({ x: pos.x, y: pos.y });
+        element.set({ ...pos });
       }}
       onTransform={(ev) => {
         const imageNode = ev.currentTarget;
