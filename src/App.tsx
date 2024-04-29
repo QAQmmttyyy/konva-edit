@@ -2,7 +2,7 @@ import { DndContext } from "@dnd-kit/core";
 import { Workspace } from "./components/canvas/workspace";
 import { SidePanel } from "./components/side-panel/side-panel";
 import { PropertyPanel } from "./components/propertyPanel";
-import { PaintToolBar } from "./components/paint-tool/paint-tool-bar";
+import { ToolBar } from "./components/tool/tool-bar";
 
 const App = () => {
   return (
@@ -12,7 +12,7 @@ const App = () => {
         <div className="w-full h-full flex-1 relative">
           <Workspace />
           <PropertyPanel />
-          <PaintToolBar />
+          <ToolBar />
         </div>
       </div>
     </DndContext>

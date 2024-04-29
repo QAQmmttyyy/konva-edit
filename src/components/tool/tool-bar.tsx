@@ -11,7 +11,7 @@ import { TOOL_MODE } from "@/lib/constants";
 import { observer } from "mobx-react-lite";
 import { useStore } from "@/context/store-context";
 
-export const PaintToolBar = observer(() => {
+export const ToolBar = observer(() => {
   const store = useStore();
   return (
     <Card className="p-1 flex absolute top-4 left-1/2 -translate-x-1/2">
