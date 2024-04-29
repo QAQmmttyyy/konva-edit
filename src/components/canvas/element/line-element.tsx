@@ -22,6 +22,11 @@ export const LineElement = observer<ILineElementProps>(({ element }) => {
       points={[...points]}
       stroke={stroke}
       strokeWidth={strokeWidth}
+      hitStrokeWidth={strokeWidth + 8}
+      onDragEnd={(ev) => {
+        const pos = ev.target.position();
+        element.set({ ...pos });
+      }}
       draggable
     />
   );

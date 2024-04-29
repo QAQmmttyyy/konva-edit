@@ -41,6 +41,10 @@ export const NodeModel = t
     },
   }))
   .views((self) => ({
+    get currentData() {
+      return self.currentStateData ?? self;
+    },
+
     get processedSelf() {
       if (!self.currentState && !self.bindings) {
         return self;
@@ -64,7 +68,7 @@ export const NodeModel = t
   }))
   .actions((self) => ({
     set(data: SnapshotIn<IAnyModelType>) {
-      const target = self.currentStateData ?? self;
+      const target = self.currentData;
       // state data can not has "currentState" "states" prop
       Object.assign(target, omit(data, ["currentState", "states"]));
     },
@@ -72,14 +76,15 @@ export const NodeModel = t
   .actions((self) => ({
     // bindings
     setBindings(key: string, value: string) {
-      const target = self.currentStateData ?? self;
+      const target = self.currentData;
       if (!target.bindings) {
         target.bindings = cast({});
       }
       target.bindings?.set(key, value);
     },
     unsetBindings(key: string) {
-      self.bindings?.delete(key);
+      const target = self.currentData;
+      target.bindings?.delete(key);
     },
 
     // states
