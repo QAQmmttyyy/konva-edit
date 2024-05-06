@@ -59,6 +59,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
     <Droppable args={{ id: PAGE_DROPPABLE_ID }}>
       <Stage
         ref={stageRef}
+        id="stage"
         width={width}
         height={height}
         onPointerDown={(ev) => {
