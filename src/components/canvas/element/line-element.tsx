@@ -12,6 +12,7 @@ export const LineElement = observer<ILineElementProps>(({ element }) => {
   const { id, x, y, points, stroke, strokeWidth } =
     element.processedSelf as ILineInstance;
 
+  // TODO line transformer
   return (
     <Line
       id={id}
@@ -22,7 +23,7 @@ export const LineElement = observer<ILineElementProps>(({ element }) => {
       points={[...points]}
       stroke={stroke}
       strokeWidth={strokeWidth}
-      hitStrokeWidth={strokeWidth + 8}
+      hitStrokeWidth={strokeWidth + 12}
       onDragEnd={(ev) => {
         const pos = ev.target.position();
         element.set({ ...pos });

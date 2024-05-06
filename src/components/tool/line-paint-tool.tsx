@@ -2,12 +2,13 @@ import Konva from "konva";
 import { observer } from "mobx-react-lite";
 import { getSnapshot } from "mobx-state-tree";
 import { useRef } from "react";
+import { Group } from "react-konva";
 
 import { useStore } from "@/context/store-context";
 import { ELEMENT_TYPE } from "@/lib/constants";
 import {
   ILineInstance,
-  ILineSnapshot,
+  ILineSnapshotIn,
   transformLinePointsToRelativeToSelfBound,
 } from "@/model/line-model";
 
@@ -33,7 +34,7 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
 
       const pointerPosition = getPointerPosition(ev);
 
-      const lineAttrs: ILineSnapshot = {
+      const lineAttrs: ILineSnapshotIn = {
         id: "tempID",
         type: ELEMENT_TYPE.line,
         points: [
@@ -84,16 +85,14 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
     };
 
     return (
-      <>
-        <ToolInteractionArea
-          width={width}
-          height={height}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-        />
+      <Group
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
+        <ToolInteractionArea width={width} height={height} />
         {store.tempElement && <Element element={store.tempElement} />}
-      </>
+      </Group>
     );
   }
 );

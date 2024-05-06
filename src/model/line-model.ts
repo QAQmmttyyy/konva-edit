@@ -37,4 +37,4 @@ export function transformLinePointsToRelativeToSelfBound(
 }
 
 export interface ILineInstance extends Instance<typeof LineModel> {}
-export interface ILineSnapshot extends SnapshotIn<typeof LineModel> {}
+export interface ILineSnapshotIn extends SnapshotIn<typeof LineModel> {}
