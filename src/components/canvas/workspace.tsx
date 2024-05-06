@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import { Page } from "./page";
 
 export const Workspace = () => {
@@ -21,7 +22,6 @@ export const Workspace = () => {
     handleWorkspaceResize();
   }, []);
 
-  // TODO handle resize 现在有问题
   useEffect(() => {
     const workspaceDom = workspaceRef.current;
     const resizeObserver = new ResizeObserver(handleWorkspaceResize);

@@ -9,7 +9,8 @@ const App = () => {
     <DndContext>
       <div className="w-full h-screen flex">
         <SidePanel />
-        <div className="w-full h-full flex-1 relative">
+        {/* overflow-hidden here, to fix responsive stage */}
+        <div className="w-full h-full flex-1 relative overflow-hidden">
           <Workspace />
           <PropertyPanel />
           <ToolBar />
