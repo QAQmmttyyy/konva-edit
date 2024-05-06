@@ -8,7 +8,7 @@ import { ELEMENT_NODE_NAME } from "@/lib/constants";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
-import { ToolArea } from "../tool/tool-area";
+import { ToolLayer } from "../tool/tool-layer";
 import { Element } from "./element";
 import { Highlighter, IHighlighterRef } from "./highlighter";
 import { ISelectionBoxRef, SelectionBox } from "./selection-box";
@@ -107,7 +107,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
           <Highlighter ref={highlighterRef} />
           <SelectionBox ref={selectionBoxRef} />
         </Layer>
-        <ToolArea width={width} height={height} />
+        <ToolLayer width={width} height={height} />
       </Stage>
     </Droppable>
   );
