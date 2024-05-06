@@ -1,13 +1,14 @@
-import { FC } from "react";
 import { observer } from "mobx-react-lite";
+import { IAnyModelType, Instance } from "mobx-state-tree";
+import { FC } from "react";
 import { Group } from "react-konva";
+
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
-import { IGroupInstance } from "@/model/group-model";
-import { INodeInstance } from "@/model/node-model";
 import { ELEMENT_REGISTRY } from "@/lib/element-register";
+import { IGroupInstance } from "@/model/group-model";
 
 interface IElementProps {
-  element: INodeInstance;
+  element: Instance<IAnyModelType>;
 }
 
 export type ElementComponentType = FC<IElementProps>;

@@ -1,5 +1,4 @@
 import { IAnyModelType } from "mobx-state-tree";
-import { FC } from "react";
 
 import {
   ElementComponentType,
@@ -59,16 +58,16 @@ function registerElement(type: ELEMENT_TYPE, options: IElementOptions) {
 export function registerAllElements() {
   registerElement(ELEMENT_TYPE.group, {
     mstModel: GroupModel,
-    component: GroupElement as FC,
+    component: GroupElement,
   });
   registerElement(ELEMENT_TYPE.image, {
     mstModel: ImageModel,
-    component: ImageElement as FC,
+    component: ImageElement,
     inputs: [...COMMON_INPUT_OPTIONS],
   });
   registerElement(ELEMENT_TYPE.line, {
     mstModel: LineModel,
-    component: LineElement as FC,
+    component: LineElement,
     inputs: [
       // example
       ...COMMON_INPUT_OPTIONS,
