@@ -24,6 +24,9 @@ export const Store = t
     bindableData: t.optional(BindableDataModel, {}),
     toolMode: TOOL_MODE.select,
     tempElement: t.maybe(childrenType), // painting element
+    // workspace related
+    pageX: 0,
+    pageY: 0,
   })
   .views((self) => ({
     get activePage() {
@@ -128,6 +131,11 @@ export const Store = t
     endUsingTool() {
       self.tempElement = undefined;
       self.toolMode = TOOL_MODE.select;
+    },
+
+    setPagePosition(x: number, y: number) {
+      self.pageX = x;
+      self.pageY = y;
     },
   }));
 

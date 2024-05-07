@@ -13,7 +13,7 @@ import {
 } from "@/model/line-model";
 
 import { Element } from "../canvas/element";
-import { getPointerPosition } from "./helper";
+import { getPointerPositionInStage } from "./helper";
 import { ToolInteractionArea } from "./tool-interaction-area";
 import { IToolProps } from "./type";
 
@@ -23,16 +23,14 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
   ({ width, height }) => {
     const isPaintingRef = useRef(false);
     const store = useStore();
-    const { tempElement } = store;
+    const { tempElement, pageX, pageY } = store;
 
     const onPointerDown = (ev: Konva.KonvaPointerEvent) => {
       ev.cancelBubble = true;
-      console.log("paint d");
-
       isPaintingRef.current = true;
       store.selectElements([]);
 
-      const pointerPosition = getPointerPosition(ev);
+      const pointerPosition = getPointerPositionInStage(ev, pageX, pageY);
 
       const lineAttrs: ILineSnapshotIn = {
         id: "tempID",
@@ -50,37 +48,42 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
 
     const onPointerMove = (ev: Konva.KonvaPointerEvent) => {
       ev.cancelBubble = true;
-      console.log("paint m");
 
       if (!isPaintingRef.current) {
         return;
       }
 
-      const pointerPosition = getPointerPosition(ev);
+      const pointerPosition = getPointerPositionInStage(ev, pageX, pageY);
       const line = tempElement as ILineInstance;
       line.setPoints(1, pointerPosition);
     };
 
     const onPointerUp = (ev: Konva.KonvaPointerEvent) => {
       ev.cancelBubble = true;
-      console.log("paint up");
-
       isPaintingRef.current = false;
 
-      const lineSnapshot = getSnapshot(tempElement as ILineInstance);
-      const lineNode = ev.target.getLayer()?.findOne(`#${lineSnapshot.id}`);
-      const lineBound = lineNode?.getClientRect();
+      const lineNode = ev.target.getLayer()?.findOne(`#${tempElement.id}`);
 
-      store.addElement({
-        ...lineSnapshot,
-        ...lineBound,
-        // now the points is relative to stage's left-top corner,
-        // we need to transform it to relative line's self bound's left-top corner.
-        points: transformLinePointsToRelativeToSelfBound(
-          lineSnapshot.points,
-          lineNode?.getClientRect()
-        ),
-      });
+      if (lineNode) {
+        const lineSnapshot = getSnapshot(tempElement as ILineInstance);
+        const lineBound = lineNode.getClientRect({
+          relativeTo: ev.target.getStage() || undefined,
+        });
+
+        store.addElement({
+          ...lineSnapshot,
+          ...lineBound,
+          // now the points is relative to stage's left-top corner,
+          // we need to transform it to relative line's self bound's left-top corner.
+          points: transformLinePointsToRelativeToSelfBound(
+            lineSnapshot.points,
+            lineBound
+          ),
+        });
+      } else {
+        console.warn("[EMS] Line node is not found, id: ", tempElement.id);
+      }
+
       store.endUsingTool();
     };
 
@@ -90,7 +93,13 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <ToolInteractionArea width={width} height={height} />
+        {/* always keep size to canvas viewport */}
+        <ToolInteractionArea
+          x={-pageX}
+          y={-pageY}
+          width={width}
+          height={height}
+        />
         {store.tempElement && <Element element={store.tempElement} />}
       </Group>
     );

@@ -1,10 +1,14 @@
 import Konva from "konva";
 
-export function getPointerPosition(ev: Konva.KonvaPointerEvent) {
+export function getPointerPositionInStage(
+  ev: Konva.KonvaPointerEvent,
+  stageX: number,
+  stageY: number
+) {
   return (
-    ev.target.getStage()?.getPointerPosition() ?? {
-      x: ev.evt.clientX,
-      y: ev.evt.clientY,
+    ev.target.getStage()?.getRelativePointerPosition() ?? {
+      x: ev.evt.clientX - stageX,
+      y: ev.evt.clientY - stageY,
     }
   );
 }

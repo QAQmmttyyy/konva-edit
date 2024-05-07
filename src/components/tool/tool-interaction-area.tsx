@@ -1,12 +1,9 @@
 import Konva from "konva";
-import { forwardRef } from "react";
+import { FC } from "react";
 import { KonvaNodeEvents, Rect } from "react-konva";
 
 interface IToolInteractionAreaProps extends Konva.RectConfig, KonvaNodeEvents {}
 
-export const ToolInteractionArea = forwardRef<
-  Konva.Rect,
-  IToolInteractionAreaProps
->((props, ref) => {
-  return <Rect ref={ref} id="tool-interaction-area" x={0} y={0} {...props} />;
-});
+export const ToolInteractionArea: FC<IToolInteractionAreaProps> = (props) => {
+  return <Rect id="tool-interaction-area" {...props} />;
+};

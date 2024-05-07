@@ -26,6 +26,8 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   const selectionBoxRef = useRef<ISelectionBoxRef>(null);
   const highlighterRef = useRef<IHighlighterRef>(null);
 
+  const { pageX, pageY } = store;
+
   // selection box
   // Note: must attach nodes to konva transformer node here.
   const selectedIds = store.selectedElementsIds.toJSON();
@@ -44,8 +46,8 @@ export const Page = observer<IPageProps>(({ width, height }) => {
 
       if (over?.id === PAGE_DROPPABLE_ID) {
         const pointerPositionInStage = {
-          x: _activatorEvent.clientX + delta.x - over.rect.left,
-          y: _activatorEvent.clientY + delta.y - over.rect.top,
+          x: _activatorEvent.clientX + delta.x - over.rect.left - pageX,
+          y: _activatorEvent.clientY + delta.y - over.rect.top - pageY,
         };
 
         store.addElement(
@@ -60,8 +62,19 @@ export const Page = observer<IPageProps>(({ width, height }) => {
       <Stage
         ref={stageRef}
         id="stage"
+        x={pageX}
+        y={pageY}
         width={width}
         height={height}
+        onWheel={(ev) => {
+          ev.evt.preventDefault();
+          // wheel to change position, and only wheel to change y, shift + wheel to change x
+          const delta = -Math.round(ev.evt.deltaY);
+          const shiftKey = ev.evt.shiftKey;
+          const newX = shiftKey ? pageX + delta : pageX;
+          const newY = shiftKey ? pageY : pageY + delta;
+          store.setPagePosition(newX, newY);
+        }}
         onPointerDown={(ev) => {
           // if click on empty area - remove all selections
           if (
@@ -102,7 +115,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
         }}
       >
         <Layer>
-          {store?.activePage.children.map((child) => (
+          {store.activePage.children.map((child) => (
             <Element key={child.id} element={child} />
           ))}
           <Highlighter ref={highlighterRef} />
