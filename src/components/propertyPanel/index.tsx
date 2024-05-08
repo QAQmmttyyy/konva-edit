@@ -19,7 +19,7 @@ export const PropertyPanel = observer(() => {
           visible: showPanel,
           invisible: !showPanel,
         },
-        "flex flex-col w-64 absolute top-14 right-4 h-[calc(100%-4.5rem)]"
+        "flex flex-col w-64 h-full"
       )}
     >
       <CardHeader>

@@ -15,22 +15,20 @@ import { useStore } from "@/context/store-context";
 export const ToolBar = observer(() => {
   const store = useStore();
   return (
-    <Card className="p-1 flex absolute top-4 left-1/2 -translate-x-1/2">
-      <div className="flex items-center gap-1">
-        {TOOLS.map((tool) => {
-          return (
-            <Button
-              key={tool.name}
-              variant="ghost"
-              className="w-fit h-fit p-2"
-              data-state={tool.mode === store.toolMode ? "selected" : ""}
-              onClick={() => store.setToolMode(tool.mode)}
-            >
-              <tool.icon className="h-4 w-4" />
-            </Button>
-          );
-        })}
-      </div>
+    <Card className="p-1 flex items-center gap-1">
+      {TOOLS.map((tool) => {
+        return (
+          <Button
+            key={tool.name}
+            variant="ghost"
+            className="w-fit h-fit p-2"
+            data-state={tool.mode === store.toolMode ? "selected" : ""}
+            onClick={() => store.setToolMode(tool.mode)}
+          >
+            <tool.icon className="h-4 w-4" />
+          </Button>
+        );
+      })}
     </Card>
   );
 });
