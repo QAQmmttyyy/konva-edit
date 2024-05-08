@@ -6,11 +6,15 @@ import {
   SquareIcon,
   TypeIcon,
 } from "lucide-react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { TOOL_MODE } from "@/lib/constants";
 import { observer } from "mobx-react-lite";
+
 import { useStore } from "@/context/store-context";
+import { TOOL_MODE } from "@/lib/constants";
+
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Separator } from "../ui/separator";
+import { ZoomTool } from "./zoom-tool";
 
 export const ToolBar = observer(() => {
   const store = useStore();
@@ -21,7 +25,7 @@ export const ToolBar = observer(() => {
           <Button
             key={tool.name}
             variant="ghost"
-            className="w-fit h-fit p-2"
+            size="icon"
             data-state={tool.mode === store.toolMode ? "selected" : ""}
             onClick={() => store.setToolMode(tool.mode)}
           >
@@ -29,6 +33,9 @@ export const ToolBar = observer(() => {
           </Button>
         );
       })}
+
+      <Separator orientation="vertical" className="h-6" />
+      <ZoomTool />
     </Card>
   );
 });
@@ -54,7 +61,6 @@ const TOOLS = [
     mode: TOOL_MODE.circle,
     icon: CircleIcon,
   },
-
   {
     name: "Line",
     mode: TOOL_MODE.line,

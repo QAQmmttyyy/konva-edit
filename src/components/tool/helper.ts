@@ -22,3 +22,7 @@ export function bindToolEventHandlers(
     target.on(eventType.slice(2).toLowerCase(), handler);
   }
 }
+
+export function getZoomPercentage(scale: number) {
+  return Math.round(scale * 100) + "%";
+}

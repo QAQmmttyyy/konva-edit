@@ -29,3 +29,7 @@ export enum MOUSE_BUTTON {
   middle = 1,
   right = 2,
 }
+
+export const MIN_SCALE = 0.2;
+export const MAX_SCALE = 30;
+export const SCALE_STEP = 0.05;

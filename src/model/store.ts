@@ -8,7 +8,7 @@ import {
 } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { TOOL_MODE } from "@/lib/constants";
+import { MAX_SCALE, MIN_SCALE, SCALE_STEP, TOOL_MODE } from "@/lib/constants";
 
 import { BindableDataModel } from "./bindable-data-model";
 import { childrenType } from "./group-model";
@@ -27,6 +27,7 @@ export const Store = t
     // workspace related
     pageX: 0,
     pageY: 0,
+    pageScale: 1,
   })
   .views((self) => ({
     get activePage() {
@@ -136,6 +137,15 @@ export const Store = t
     setPagePosition(x: number, y: number) {
       self.pageX = x;
       self.pageY = y;
+    },
+    setPageScale(scale: number) {
+      self.pageScale = scale;
+    },
+    zoomOut() {
+      self.pageScale = Math.max(MIN_SCALE, self.pageScale - SCALE_STEP);
+    },
+    zoomIn() {
+      self.pageScale = Math.min(MAX_SCALE, self.pageScale + SCALE_STEP);
     },
   }));
 
