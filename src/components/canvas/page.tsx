@@ -4,13 +4,13 @@ import { useLayoutEffect, useRef } from "react";
 import { Layer, Stage } from "react-konva";
 
 import { useStore } from "@/context/store-context";
-import { ELEMENT_NODE_NAME, MOUSE_BUTTON } from "@/lib/constants";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
 import { bindToolEventHandlers } from "../tool/helper";
 import { ToolLayer } from "../tool/tool-layer";
 import { useHandTool } from "../tool/use-hand-tool";
+import { useSelectTool } from "../tool/use-select-tool";
 import { Element } from "./element";
 import { Highlighter, IHighlighterRef } from "./highlighter";
 import { ISelectionBoxRef, SelectionBox } from "./selection-box";
@@ -60,13 +60,15 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   });
 
   // this way can bind multiple handler on same event type.
+  const selectToolHandlers = useSelectTool();
   const handToolHandlers = useHandTool();
   useLayoutEffect(() => {
     if (!stageRef.current) {
       return;
     }
 
-    bindToolEventHandlers(stageRef.current!, handToolHandlers);
+    bindToolEventHandlers(stageRef.current, selectToolHandlers);
+    bindToolEventHandlers(stageRef.current, handToolHandlers);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -88,47 +90,6 @@ export const Page = observer<IPageProps>(({ width, height }) => {
           const newX = shiftKey ? pageX + delta : pageX;
           const newY = shiftKey ? pageY : pageY + delta;
           store.setPagePosition(newX, newY);
-        }}
-        onPointerDown={(ev) => {
-          // wheel press down
-          if (ev.evt.button === MOUSE_BUTTON.middle) {
-            console.log("wheel press down");
-            return;
-          }
-
-          // if click on empty area - remove all selections
-          if (
-            ev.target === ev.target.getStage() &&
-            store.selectedElementsIds.length > 0
-          ) {
-            store.selectElements([]);
-            return;
-          }
-
-          // do nothing if clicked NOT on our rectangles
-          if (!ev.target.hasName(ELEMENT_NODE_NAME)) {
-            return;
-          }
-
-          // do we pressed shift or ctrl?
-          const shiftPressed = ev.evt.shiftKey;
-          const isSelected = store.selectedElementsIds.includes(ev.target.id());
-
-          if (!shiftPressed && !isSelected) {
-            // if no key pressed and the node is not selected
-            // select just one
-            store.selectElements([ev.target.id()]);
-          } else if (shiftPressed && isSelected) {
-            // if we pressed keys and node was selected
-            // we need to remove it from selection:
-            store.unselectElements([ev.target.id()]);
-          } else if (shiftPressed && !isSelected) {
-            // add the node into selection
-            store.selectElements([
-              ...store.selectedElementsIds,
-              ev.target.id(),
-            ]);
-          }
         }}
         onPointerMove={(ev) => {
           highlighterRef.current?.highlight(ev);
