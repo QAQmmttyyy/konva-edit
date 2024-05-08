@@ -5,6 +5,7 @@ import { Layer } from "react-konva";
 import { useStore } from "@/context/store-context";
 import { TOOL_MODE } from "@/lib/constants";
 
+import { HandTool } from "./hand-tool";
 import { LinePaintTool } from "./line-paint-tool";
 import { IToolProps } from "./type";
 
@@ -29,5 +30,6 @@ export const ToolLayer = observer<IToolLayerProps>(({ width, height }) => {
 });
 
 const TOOL_MAP: Record<string, FC<IToolProps>> = {
+  [TOOL_MODE.hand]: HandTool,
   [TOOL_MODE.line]: LinePaintTool,
 };

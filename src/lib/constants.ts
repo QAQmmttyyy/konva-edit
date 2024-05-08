@@ -17,8 +17,15 @@ export enum INPUT_TYPE {
 
 export enum TOOL_MODE {
   select = "select",
+  hand = "hand",
   rect = "rect",
   circle = "circle",
   line = "line",
   text = "text",
+}
+
+export enum MOUSE_BUTTON {
+  left = 0,
+  middle = 1,
+  right = 2,
 }

@@ -1,11 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import Konva from "konva";
 import { addMiddleware, onSnapshot } from "mobx-state-tree";
 import { actionLogger } from "mst-middlewares";
-import { StoreContextProvider } from "./context/store-context.ts";
-import { createStore } from "./model/store.ts";
-import { registerAllElements } from "./lib/element-register.ts";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
 import App from "./App.tsx";
+import { StoreContextProvider } from "./context/store-context.ts";
+import { registerAllElements } from "./lib/element-register.ts";
+import { createStore } from "./model/store.ts";
+
 import "./index.css";
 
 export function createApp(container: string) {
@@ -15,6 +18,9 @@ export function createApp(container: string) {
   });
   addMiddleware(store, actionLogger);
   store.addPage();
+
+  // Configure what mouse buttons can be used for drag and drop. [0] means only left mouse button.
+  Konva.dragButtons = [0];
 
   const domNode = document.getElementById(container)!;
   const root = createRoot(domNode);

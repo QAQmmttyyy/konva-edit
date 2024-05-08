@@ -1,4 +1,5 @@
 import Konva from "konva";
+import { KonvaNodeEvents } from "react-konva";
 
 export function getPointerPositionInStage(
   ev: Konva.KonvaPointerEvent,
@@ -11,4 +12,13 @@ export function getPointerPositionInStage(
       y: ev.evt.clientY - stageY,
     }
   );
+}
+
+export function bindToolEventHandlers(
+  target: Konva.Node,
+  handlers: KonvaNodeEvents
+) {
+  for (const [eventType, handler] of Object.entries(handlers)) {
+    target.on(eventType.slice(2).toLowerCase(), handler);
+  }
 }

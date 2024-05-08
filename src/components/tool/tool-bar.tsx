@@ -1,5 +1,6 @@
 import {
   CircleIcon,
+  HandIcon,
   MinusIcon,
   MousePointerIcon,
   SquareIcon,
@@ -39,6 +40,11 @@ const TOOLS = [
     name: "Select",
     mode: TOOL_MODE.select,
     icon: MousePointerIcon,
+  },
+  {
+    name: "Hand",
+    mode: TOOL_MODE.hand,
+    icon: HandIcon,
   },
   {
     name: "Rectangle",

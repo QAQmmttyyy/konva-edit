@@ -4,11 +4,13 @@ import { useLayoutEffect, useRef } from "react";
 import { Layer, Stage } from "react-konva";
 
 import { useStore } from "@/context/store-context";
-import { ELEMENT_NODE_NAME } from "@/lib/constants";
+import { ELEMENT_NODE_NAME, MOUSE_BUTTON } from "@/lib/constants";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
+import { bindToolEventHandlers } from "../tool/helper";
 import { ToolLayer } from "../tool/tool-layer";
+import { useHandTool } from "../tool/use-hand-tool";
 import { Element } from "./element";
 import { Highlighter, IHighlighterRef } from "./highlighter";
 import { ISelectionBoxRef, SelectionBox } from "./selection-box";
@@ -57,6 +59,18 @@ export const Page = observer<IPageProps>(({ width, height }) => {
     },
   });
 
+  // this way can bind multiple handler on same event type.
+  const handToolHandlers = useHandTool();
+  useLayoutEffect(() => {
+    if (!stageRef.current) {
+      return;
+    }
+
+    bindToolEventHandlers(stageRef.current!, handToolHandlers);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Droppable args={{ id: PAGE_DROPPABLE_ID }}>
       <Stage
@@ -76,6 +90,12 @@ export const Page = observer<IPageProps>(({ width, height }) => {
           store.setPagePosition(newX, newY);
         }}
         onPointerDown={(ev) => {
+          // wheel press down
+          if (ev.evt.button === MOUSE_BUTTON.middle) {
+            console.log("wheel press down");
+            return;
+          }
+
           // if click on empty area - remove all selections
           if (
             ev.target === ev.target.getStage() &&
