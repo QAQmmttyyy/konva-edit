@@ -32,4 +32,6 @@ export enum MOUSE_BUTTON {
 
 export const MIN_SCALE = 0.2;
 export const MAX_SCALE = 30;
-export const SCALE_STEP = 0.05;
+export const SCALE_STEP = 0.1;
+
+export const SCROLL_STEP = 50;

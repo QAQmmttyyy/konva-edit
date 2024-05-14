@@ -69,6 +69,7 @@ export const Highlighter = forwardRef<IHighlighterRef>((_props, ref) => {
       visible={false}
       stroke={colors.sky[400]}
       strokeWidth={2}
+      strokeScaleEnabled={false}
       {...config}
     />
   );

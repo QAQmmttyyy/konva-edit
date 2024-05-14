@@ -7,10 +7,15 @@ import { useStore } from "@/context/store-context";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
-import { bindToolEventHandlers } from "../tool/helper";
+import {
+  bindToolEventHandlers,
+  getInverseTransformedPoint,
+} from "../tool/helper";
 import { ToolLayer } from "../tool/tool-layer";
 import { useHandTool } from "../tool/use-hand-tool";
 import { useSelectTool } from "../tool/use-select-tool";
+import { useWheelScrollTool } from "../tool/use-wheel-scroll-tool";
+import { useWheelZoomTool } from "../tool/use-wheel-zoom-tool";
 import { Element } from "./element";
 import { Highlighter, IHighlighterRef } from "./highlighter";
 import { ISelectionBoxRef, SelectionBox } from "./selection-box";
@@ -28,7 +33,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   const selectionBoxRef = useRef<ISelectionBoxRef>(null);
   const highlighterRef = useRef<IHighlighterRef>(null);
 
-  const { pageX, pageY } = store;
+  const { pageX, pageY, pageScale } = store;
 
   // selection box
   // Note: must attach nodes to konva transformer node here.
@@ -47,10 +52,16 @@ export const Page = observer<IPageProps>(({ width, height }) => {
       _activatorEvent.preventDefault();
 
       if (over?.id === PAGE_DROPPABLE_ID) {
-        const pointerPositionInStage = {
-          x: _activatorEvent.clientX + delta.x - over.rect.left - pageX,
-          y: _activatorEvent.clientY + delta.y - over.rect.top - pageY,
-        };
+        const pointerPositionInStage = getInverseTransformedPoint(
+          {
+            x: _activatorEvent.clientX + delta.x - over.rect.left,
+            y: _activatorEvent.clientY + delta.y - over.rect.top,
+          },
+          {
+            translation: { x: pageX, y: pageY },
+            scale: { x: pageScale, y: pageScale },
+          }
+        );
 
         store.addElement(
           Object.assign({}, active.data.current, pointerPositionInStage)
@@ -62,6 +73,8 @@ export const Page = observer<IPageProps>(({ width, height }) => {
   // this way can bind multiple handler on same event type.
   const selectToolHandlers = useSelectTool();
   const handToolHandlers = useHandTool();
+  const wheelScrollHandlers = useWheelScrollTool();
+  const wheelZoomHandlers = useWheelZoomTool();
   useLayoutEffect(() => {
     if (!stageRef.current) {
       return;
@@ -69,6 +82,8 @@ export const Page = observer<IPageProps>(({ width, height }) => {
 
     bindToolEventHandlers(stageRef.current, selectToolHandlers);
     bindToolEventHandlers(stageRef.current, handToolHandlers);
+    bindToolEventHandlers(stageRef.current, wheelScrollHandlers);
+    bindToolEventHandlers(stageRef.current, wheelZoomHandlers);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -78,24 +93,13 @@ export const Page = observer<IPageProps>(({ width, height }) => {
       <Stage
         ref={stageRef}
         id="stage"
-        x={pageX}
-        y={pageY}
         width={width}
         height={height}
-        onWheel={(ev) => {
-          ev.evt.preventDefault();
-          // wheel to change position, and only wheel to change y, shift + wheel to change x
-          const delta = -Math.round(ev.evt.deltaY);
-          const shiftKey = ev.evt.shiftKey;
-          const newX = shiftKey ? pageX + delta : pageX;
-          const newY = shiftKey ? pageY : pageY + delta;
-          store.setPagePosition(newX, newY);
-        }}
         onPointerMove={(ev) => {
           highlighterRef.current?.highlight(ev);
         }}
       >
-        <Layer>
+        <Layer x={pageX} y={pageY} scaleX={pageScale} scaleY={pageScale}>
           {store.activePage.children.map((child) => (
             <Element key={child.id} element={child} />
           ))}

@@ -6,14 +6,14 @@ import { Group } from "react-konva";
 
 import { useStore } from "@/context/store-context";
 import { ELEMENT_TYPE } from "@/lib/constants";
-import {
-  ILineInstance,
-  ILineSnapshotIn,
-  transformLinePointsToRelativeToSelfBound,
-} from "@/model/line-model";
+import { ILineInstance, ILineSnapshotIn } from "@/model/line-model";
 
 import { Element } from "../canvas/element";
-import { getPointerPositionInStage } from "./helper";
+import {
+  getInverseTransformedLinePoints,
+  getLinePointsToRelativeToBound,
+  getRelativePointerPositionInLayer,
+} from "./helper";
 import { ToolInteractionArea } from "./tool-interaction-area";
 import { IToolProps } from "./type";
 
@@ -23,14 +23,14 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
   ({ width, height }) => {
     const isPaintingRef = useRef(false);
     const store = useStore();
-    const { tempElement, pageX, pageY } = store;
+    const { tempElement, pageX, pageY, pageScale } = store;
 
     const onPointerDown = (ev: Konva.KonvaPointerEvent) => {
       ev.cancelBubble = true;
       isPaintingRef.current = true;
       store.selectElements([]);
 
-      const pointerPosition = getPointerPositionInStage(ev, pageX, pageY);
+      const pointerPosition = getRelativePointerPositionInLayer(ev);
 
       const lineAttrs: ILineSnapshotIn = {
         id: "tempID",
@@ -53,7 +53,7 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
         return;
       }
 
-      const pointerPosition = getPointerPositionInStage(ev, pageX, pageY);
+      const pointerPosition = getRelativePointerPositionInLayer(ev);
       const line = tempElement as ILineInstance;
       line.setPoints(1, pointerPosition);
     };
@@ -65,21 +65,43 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
       const lineNode = ev.target.getLayer()?.findOne(`#${tempElement.id}`);
 
       if (lineNode) {
-        const lineSnapshot = getSnapshot(tempElement as ILineInstance);
         const lineBound = lineNode.getClientRect({
-          relativeTo: ev.target.getStage() || undefined,
+          relativeTo: ev.target.getLayer() || undefined,
         });
+        const lineSnapshot = Object.assign(
+          {},
+          getSnapshot(tempElement as ILineInstance),
+          lineBound
+        );
 
-        store.addElement({
-          ...lineSnapshot,
-          ...lineBound,
-          // now the points is relative to stage's left-top corner,
-          // we need to transform it to relative line's self bound's left-top corner.
-          points: transformLinePointsToRelativeToSelfBound(
-            lineSnapshot.points,
-            lineBound
-          ),
-        });
+        const inverseTransformedLineBound = {
+          x: (lineBound.x - pageX) / pageScale,
+          y: (lineBound.y - pageY) / pageScale,
+          width: lineBound.width / pageScale,
+          height: lineBound.height / pageScale,
+        };
+        const inverseTransformedLinePoints = getInverseTransformedLinePoints(
+          lineSnapshot.points,
+          {
+            translation: { x: pageX, y: pageY },
+            scale: { x: pageScale, y: pageScale },
+          }
+        );
+
+        const finalLineSnapshot = Object.assign(
+          lineSnapshot,
+          inverseTransformedLineBound,
+          {
+            // now the points is relative to stage's left-top corner,
+            // we need to transform it to relative line's self bound's left-top corner.
+            points: getLinePointsToRelativeToBound(
+              inverseTransformedLinePoints,
+              inverseTransformedLineBound
+            ),
+          }
+        );
+
+        store.addElement(finalLineSnapshot);
       } else {
         console.warn("[EMS] Line node is not found, id: ", tempElement.id);
       }
@@ -94,12 +116,7 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
         onPointerUp={onPointerUp}
       >
         {/* always keep size to canvas viewport */}
-        <ToolInteractionArea
-          x={-pageX}
-          y={-pageY}
-          width={width}
-          height={height}
-        />
+        <ToolInteractionArea width={width} height={height} />
         {store.tempElement && <Element element={store.tempElement} />}
       </Group>
     );

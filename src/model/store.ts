@@ -8,7 +8,8 @@ import {
 } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { MAX_SCALE, MIN_SCALE, SCALE_STEP, TOOL_MODE } from "@/lib/constants";
+import { TOOL_MODE } from "@/lib/constants";
+import { getZoomInScale, getZoomOutScale } from "@/lib/utils";
 
 import { BindableDataModel } from "./bindable-data-model";
 import { childrenType } from "./group-model";
@@ -142,10 +143,10 @@ export const Store = t
       self.pageScale = scale;
     },
     zoomOut() {
-      self.pageScale = Math.max(MIN_SCALE, self.pageScale - SCALE_STEP);
+      self.pageScale = getZoomOutScale(self.pageScale);
     },
     zoomIn() {
-      self.pageScale = Math.min(MAX_SCALE, self.pageScale + SCALE_STEP);
+      self.pageScale = getZoomInScale(self.pageScale);
     },
   }));
 
