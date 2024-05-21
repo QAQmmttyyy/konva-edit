@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import { Layer, Stage } from "react-konva";
 
 import { useStore } from "@/context/store-context";
+import { TOOL_MODE } from "@/lib/constants";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 
 import { Droppable } from "../dnd/droppable";
@@ -80,10 +81,29 @@ export const Page = observer<IPageProps>(({ width, height }) => {
       return;
     }
 
-    bindToolEventHandlers(stageRef.current, selectToolHandlers);
-    bindToolEventHandlers(stageRef.current, handToolHandlers);
-    bindToolEventHandlers(stageRef.current, wheelScrollHandlers);
-    bindToolEventHandlers(stageRef.current, wheelZoomHandlers);
+    const unbindSelectToolHandlers = bindToolEventHandlers(
+      stageRef.current,
+      selectToolHandlers
+    );
+    const unbindHandToolHandlers = bindToolEventHandlers(
+      stageRef.current,
+      handToolHandlers
+    );
+    const unbindWheelScrollHandlers = bindToolEventHandlers(
+      stageRef.current,
+      wheelScrollHandlers
+    );
+    const unbindWheelZoomHandlers = bindToolEventHandlers(
+      stageRef.current,
+      wheelZoomHandlers
+    );
+
+    return () => {
+      unbindSelectToolHandlers();
+      unbindHandToolHandlers();
+      unbindWheelScrollHandlers();
+      unbindWheelZoomHandlers();
+    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -99,7 +119,13 @@ export const Page = observer<IPageProps>(({ width, height }) => {
           highlighterRef.current?.highlight(ev);
         }}
       >
-        <Layer x={pageX} y={pageY} scaleX={pageScale} scaleY={pageScale}>
+        <Layer
+          x={pageX}
+          y={pageY}
+          scaleX={pageScale}
+          scaleY={pageScale}
+          listening={store.toolMode === TOOL_MODE.select}
+        >
           {store.activePage.children.map((child) => (
             <Element key={child.id} element={child} />
           ))}

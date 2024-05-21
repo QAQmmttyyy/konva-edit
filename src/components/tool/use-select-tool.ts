@@ -1,14 +1,18 @@
 import { KonvaNodeEvents } from "react-konva";
 
 import { useStore } from "@/context/store-context";
-import { ELEMENT_NODE_NAME, MOUSE_BUTTON } from "@/lib/constants";
+import { ELEMENT_NODE_NAME, MOUSE_BUTTON, TOOL_MODE } from "@/lib/constants";
 
 export function useSelectTool(): KonvaNodeEvents {
   const store = useStore();
-  const selectButtons = [MOUSE_BUTTON.left, MOUSE_BUTTON.right];
+
   return {
     onPointerDown(ev) {
-      if (!selectButtons.includes(ev.evt.button)) {
+      if (store.toolMode !== TOOL_MODE.select) {
+        return;
+      }
+
+      if (![MOUSE_BUTTON.left, MOUSE_BUTTON.right].includes(ev.evt.button)) {
         return;
       }
 

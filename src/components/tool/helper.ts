@@ -22,6 +22,12 @@ export function bindToolEventHandlers(
   for (const [eventType, handler] of Object.entries(handlers)) {
     target.on(eventType.slice(2).toLowerCase(), handler);
   }
+
+  return () => {
+    for (const [eventType, handler] of Object.entries(handlers)) {
+      target.off(eventType.slice(2).toLowerCase(), handler);
+    }
+  }
 }
 
 export function getZoomPercentage(scale: number) {
