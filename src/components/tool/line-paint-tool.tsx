@@ -1,4 +1,5 @@
 import Konva from "konva";
+import { Vector2d } from "konva/lib/types";
 import { observer } from "mobx-react-lite";
 import { getSnapshot } from "mobx-state-tree";
 import { useRef } from "react";
@@ -23,14 +24,25 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
   ({ width, height }) => {
     const isPaintingRef = useRef(false);
     const store = useStore();
-    const { tempElement, pageX, pageY, pageScale } = store;
+
+    const getBoundFromLinePoints = (point1: Vector2d, point2: Vector2d) => {
+      return {
+        x: Math.min(point1.x, point2.x),
+        y: Math.min(point1.y, point2.y),
+        width: Math.abs(point2.x - point1.x),
+        height: Math.abs(point2.y - point1.y),
+      };
+    };
 
     const onPointerDown = (ev: Konva.KonvaPointerEvent) => {
+      document.addEventListener("pointermove", onPointerMove);
+      document.addEventListener("pointerup", onPointerUp);
+
       ev.cancelBubble = true;
       isPaintingRef.current = true;
       store.selectElements([]);
 
-      const pointerPosition = getRelativePointerPositionInLayer(ev);
+      const pointerPosition = getRelativePointerPositionInLayer(ev.evt);
 
       const lineAttrs: ILineSnapshotIn = {
         id: "tempID",
@@ -46,75 +58,70 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
       store.setTempElement(lineAttrs);
     };
 
-    const onPointerMove = (ev: Konva.KonvaPointerEvent) => {
-      ev.cancelBubble = true;
-
+    const onPointerMove = (ev: PointerEvent) => {
       if (!isPaintingRef.current) {
         return;
       }
 
       const pointerPosition = getRelativePointerPositionInLayer(ev);
-      const line = tempElement as ILineInstance;
+      const line = store.tempElement as ILineInstance;
       line.setPoints(1, pointerPosition);
     };
 
-    const onPointerUp = (ev: Konva.KonvaPointerEvent) => {
-      ev.cancelBubble = true;
+    const onPointerUp = () => {
       isPaintingRef.current = false;
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
 
-      const lineNode = ev.target.getLayer()?.findOne(`#${tempElement.id}`);
+      const line = store.tempElement as ILineInstance;
 
-      if (lineNode) {
-        const lineBound = lineNode.getClientRect({
-          relativeTo: ev.target.getLayer() || undefined,
-        });
-        const lineSnapshot = Object.assign(
-          {},
-          getSnapshot(tempElement as ILineInstance),
-          lineBound
-        );
+      const lineBound = getBoundFromLinePoints(
+        {
+          x: line.points[0],
+          y: line.points[1],
+        },
+        {
+          x: line.points[2],
+          y: line.points[3],
+        }
+      );
 
-        const inverseTransformedLineBound = {
-          x: (lineBound.x - pageX) / pageScale,
-          y: (lineBound.y - pageY) / pageScale,
-          width: lineBound.width / pageScale,
-          height: lineBound.height / pageScale,
-        };
-        const inverseTransformedLinePoints = getInverseTransformedLinePoints(
-          lineSnapshot.points,
-          {
-            translation: { x: pageX, y: pageY },
-            scale: { x: pageScale, y: pageScale },
-          }
-        );
+      const lineSnapshot = Object.assign({}, getSnapshot(line), lineBound);
 
-        const finalLineSnapshot = Object.assign(
-          lineSnapshot,
-          inverseTransformedLineBound,
-          {
-            // now the points is relative to stage's left-top corner,
-            // we need to transform it to relative line's self bound's left-top corner.
-            points: getLinePointsToRelativeToBound(
-              inverseTransformedLinePoints,
-              inverseTransformedLineBound
-            ),
-          }
-        );
+      const inverseTransformedLineBound = {
+        x: (lineBound.x - store.pageX) / store.pageScale,
+        y: (lineBound.y - store.pageY) / store.pageScale,
+        width: lineBound.width / store.pageScale,
+        height: lineBound.height / store.pageScale,
+      };
 
-        store.addElement(finalLineSnapshot);
-      } else {
-        console.warn("[EMS] Line node is not found, id: ", tempElement.id);
-      }
+      const inverseTransformedLinePoints = getInverseTransformedLinePoints(
+        lineSnapshot.points,
+        {
+          translation: { x: store.pageX, y: store.pageY },
+          scale: { x: store.pageScale, y: store.pageScale },
+        }
+      );
 
+      const finalLineSnapshot = Object.assign(
+        lineSnapshot,
+        inverseTransformedLineBound,
+        {
+          // now the points is relative to stage's left-top corner,
+          // we need to transform it to relative line's self bound's left-top corner.
+          points: getLinePointsToRelativeToBound(
+            inverseTransformedLinePoints,
+            inverseTransformedLineBound
+          ),
+        }
+      );
+
+      store.addElement(finalLineSnapshot);
       store.endUsingTool();
     };
 
     return (
-      <Group
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-      >
+      <Group onPointerDown={onPointerDown}>
         {/* always keep size to canvas viewport */}
         <ToolInteractionArea width={width} height={height} />
         {store.tempElement && <Element element={store.tempElement} />}

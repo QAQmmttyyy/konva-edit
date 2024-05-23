@@ -3,16 +3,14 @@ import { IRect, Vector2d } from "konva/lib/types";
 import { KonvaNodeEvents } from "react-konva";
 
 export function getRelativePointerPositionInLayer(
-  ev: Konva.KonvaPointerEvent,
+  ev: PointerEvent,
   pageX: number = 0,
   pageY: number = 0
 ) {
-  return (
-    ev.target.getLayer()?.getRelativePointerPosition() ?? {
-      x: ev.evt.offsetX - pageX,
-      y: ev.evt.offsetY - pageY,
-    }
-  );
+  return {
+    x: ev.offsetX - pageX,
+    y: ev.offsetY - pageY,
+  };
 }
 
 export function bindToolEventHandlers(
@@ -27,7 +25,7 @@ export function bindToolEventHandlers(
     for (const [eventType, handler] of Object.entries(handlers)) {
       target.off(eventType.slice(2).toLowerCase(), handler);
     }
-  }
+  };
 }
 
 export function getZoomPercentage(scale: number) {
