@@ -116,7 +116,9 @@ export const Page = observer<IPageProps>(({ width, height }) => {
         width={width}
         height={height}
         onPointerMove={(ev) => {
-          highlighterRef.current?.highlight(ev);
+          if (store.toolMode === TOOL_MODE.select) {
+            highlighterRef.current?.highlight(ev);
+          }
         }}
       >
         <Layer
