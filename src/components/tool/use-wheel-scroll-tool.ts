@@ -11,13 +11,20 @@ export function useWheelScrollTool(): KonvaNodeEvents {
 
       ev.evt.preventDefault();
 
-      // wheel to change position, and only wheel to change y, shift + wheel to change x
-      const delta = -ev.evt.deltaY > 0 ? SCROLL_STEP : -SCROLL_STEP;
-      const shiftKey = ev.evt.shiftKey;
+      // clamp delta to prevent scrolling too fast
+      const deltaX = Math.max(
+        Math.min(ev.evt.deltaX, SCROLL_STEP),
+        -SCROLL_STEP
+      );
+      const deltaY = Math.max(
+        Math.min(ev.evt.deltaY, SCROLL_STEP),
+        -SCROLL_STEP
+      );
+
       const { pageX, pageY } = store;
 
-      const newX = shiftKey ? pageX + delta : pageX;
-      const newY = shiftKey ? pageY : pageY + delta;
+      const newX = pageX - deltaX;
+      const newY = pageY - deltaY;
 
       store.setPagePosition(newX, newY);
     },
