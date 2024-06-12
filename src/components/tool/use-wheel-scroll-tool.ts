@@ -13,11 +13,14 @@ export function useWheelScrollTool(): KonvaNodeEvents {
 
       // clamp delta to prevent scrolling too fast
       const deltaX = Math.max(
-        Math.min(ev.evt.deltaX, SCROLL_STEP),
+        Math.min(
+          ev.evt.shiftKey ? ev.evt.deltaX || ev.evt.deltaY : ev.evt.deltaX,
+          SCROLL_STEP
+        ),
         -SCROLL_STEP
       );
       const deltaY = Math.max(
-        Math.min(ev.evt.deltaY, SCROLL_STEP),
+        Math.min(ev.evt.shiftKey ? 0 : ev.evt.deltaY, SCROLL_STEP),
         -SCROLL_STEP
       );
 

@@ -2,15 +2,14 @@ import { observer } from "mobx-react-lite";
 import { Line } from "react-konva";
 
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
-import { ILineInstance } from "@/model/line-model";
+import { TChild } from "@/model/types";
 
 interface ILineElementProps {
-  element: ILineInstance;
+  element: TChild;
 }
 
 export const LineElement = observer<ILineElementProps>(({ element }) => {
-  const { id, x, y, points, stroke, strokeWidth } =
-    element.processedSelf as ILineInstance;
+  const { id, x, y, points, stroke, strokeWidth } = element.data;
 
   // TODO line transformer
   return (
@@ -26,7 +25,7 @@ export const LineElement = observer<ILineElementProps>(({ element }) => {
       hitStrokeWidth={strokeWidth + 12}
       onDragEnd={(ev) => {
         const pos = ev.target.position();
-        element.set({ ...pos });
+        element.patch({ ...pos });
       }}
       draggable
     />

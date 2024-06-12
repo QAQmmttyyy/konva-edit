@@ -38,7 +38,7 @@ export const Page = observer<IPageProps>(({ width, height }) => {
 
   // selection box
   // Note: must attach nodes to konva transformer node here.
-  const selectedIds = store.selectedElementsIds.toJSON();
+  const selectedIds = store.selectedElementsIds;
   useLayoutEffect(() => {
     selectionBoxRef.current?.nodes(selectedIds);
     highlighterRef.current?.hide();

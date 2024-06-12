@@ -1,14 +1,13 @@
 import { observer } from "mobx-react-lite";
-import { IAnyModelType, Instance } from "mobx-state-tree";
 import { FC } from "react";
 import { Group } from "react-konva";
 
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
 import { ELEMENT_REGISTRY } from "@/lib/element-register";
-import { IGroupInstance } from "@/model/group-model";
+import { TChild } from "@/model/types";
 
 interface IElementProps {
-  element: Instance<IAnyModelType>;
+  element: TChild;
 }
 
 export type ElementComponentType = FC<IElementProps>;
@@ -25,7 +24,7 @@ export const Element = observer<IElementProps>(({ element }) => {
 });
 
 interface IGroupElementProps {
-  element: IGroupInstance;
+  element: TChild;
 }
 
 export const GroupElement = observer<IGroupElementProps>(({ element }) => {

@@ -4,22 +4,21 @@ import { useEffect } from "react";
 import { Image } from "react-konva";
 import useImage from "use-image";
 import { ELEMENT_NODE_NAME } from "@/lib/constants";
-import { IImageInstance, IImageSnapshotIn } from "@/model/image-model";
+import { TChild } from "@/model/types";
 
 interface IImageElementProps {
-  element: IImageInstance;
+  element: TChild;
 }
 
 export const ImageElement = observer<IImageElementProps>(({ element }) => {
-  const { id, src, x, y, width, height, rotation } =
-    element.processedSelf as IImageInstance;
+  const { id, src, x, y, width, height, rotation } = element.data;
 
   const [img, status] = useImage(src);
 
   useEffect(() => {
     if (status === "loaded" && img) {
       // TODO not push to undo
-      element.set({ width: img.width, height: img.height });
+      element.patch({ width: img.width, height: img.height });
     }
   }, [element, img, status]);
 
@@ -36,7 +35,7 @@ export const ImageElement = observer<IImageElementProps>(({ element }) => {
       rotation={rotation}
       onDragEnd={(ev) => {
         const pos = ev.target.position();
-        element.set({ ...pos });
+        element.patch({ ...pos });
       }}
       onTransform={(ev) => {
         const imageNode = ev.currentTarget;
@@ -50,11 +49,11 @@ export const ImageElement = observer<IImageElementProps>(({ element }) => {
       }}
       onTransformEnd={(ev) => {
         const imageNode = ev.currentTarget;
-        element.set({
+        element.patch({
           width: imageNode.width() * imageNode.scaleX(),
           height: imageNode.height() * imageNode.scaleY(),
           rotation: imageNode.rotation(),
-        } satisfies Omit<IImageSnapshotIn, "id">);
+        });
       }}
       draggable
     />

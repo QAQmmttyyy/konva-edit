@@ -13,8 +13,10 @@ export const BasicInput = withInputWrapper(
       onChange: handleChange,
       normalize,
     } = options;
-    const value =
-      element.processedSelf[name as keyof typeof element.processedSelf];
+
+    const value = element.data[name as keyof typeof element.data] as
+      | string
+      | number;
 
     const onChange = useCallback(
       (ev: ChangeEvent<HTMLInputElement>) => {

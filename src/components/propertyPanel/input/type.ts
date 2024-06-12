@@ -1,7 +1,7 @@
 import { IInputOptions } from "@/lib/element-register";
-import { INodeInstance } from "@/model/node-model";
+import { TChild } from "@/model/types";
 
 export interface IPropertyInputProps {
-  element: INodeInstance;
+  element: TChild;
   options: IInputOptions;
 }

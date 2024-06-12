@@ -1,13 +1,14 @@
 import Konva from "konva";
 import { Vector2d } from "konva/lib/types";
+import { pick } from "lodash";
+import { ModelCreationData } from "mobx-keystone";
 import { observer } from "mobx-react-lite";
-import { getSnapshot } from "mobx-state-tree";
 import { useRef } from "react";
 import { Group } from "react-konva";
 
 import { useStore } from "@/context/store-context";
 import { ELEMENT_TYPE } from "@/lib/constants";
-import { ILineInstance, ILineSnapshotIn } from "@/model/line-model";
+import { LineModel } from "@/model/line-model.new";
 
 import { Element } from "../canvas/element";
 import {
@@ -44,7 +45,7 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
 
       const pointerPosition = getRelativePointerPositionInLayer(ev.evt);
 
-      const lineAttrs: ILineSnapshotIn = {
+      const lineAttrs: ModelCreationData<LineModel> = {
         id: "tempID",
         type: ELEMENT_TYPE.line,
         points: [
@@ -64,8 +65,8 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
       }
 
       const pointerPosition = getRelativePointerPositionInLayer(ev);
-      const line = store.tempElement as ILineInstance;
-      line.setPoints(1, pointerPosition);
+      const line = store.tempElement as LineModel;
+      line?.setPoints(1, pointerPosition);
     };
 
     const onPointerUp = () => {
@@ -73,7 +74,7 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
       document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", onPointerUp);
 
-      const line = store.tempElement as ILineInstance;
+      const line = store.tempElement as LineModel;
 
       const lineBound = getBoundFromLinePoints(
         {
@@ -86,7 +87,10 @@ export const LinePaintTool = observer<ILinePaintToolProps>(
         }
       );
 
-      const lineSnapshot = Object.assign({}, getSnapshot(line), lineBound);
+      const lineSnapshot = Object.assign(
+        pick(line, "points", "type"),
+        lineBound
+      );
 
       const inverseTransformedLineBound = {
         x: (lineBound.x - store.pageX) / store.pageScale,

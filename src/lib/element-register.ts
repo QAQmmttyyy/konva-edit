@@ -1,4 +1,4 @@
-import { IAnyModelType } from "mobx-state-tree";
+import { ModelClass } from "mobx-keystone";
 
 import {
   ElementComponentType,
@@ -6,10 +6,10 @@ import {
 } from "@/components/canvas/element";
 import { ImageElement } from "@/components/canvas/element/image-element";
 import { LineElement } from "@/components/canvas/element/line-element";
-import { GroupModel } from "@/model/group-model";
-import { ImageModel } from "@/model/image-model";
-import { LineModel } from "@/model/line-model";
-import { INodeInstance } from "@/model/node-model";
+import { GroupModel } from "@/model/group-model.new";
+import { ImageModel } from "@/model/image-model.new";
+import { LineModel } from "@/model/line-model.new";
+import { TChild } from "@/model/types";
 
 import { ELEMENT_TYPE, INPUT_TYPE } from "./constants";
 
@@ -30,10 +30,10 @@ export interface IInputOptions {
   friendlyName?: string;
   placeholder?: string;
   bindable?: boolean;
-  normalize?: (value: unknown) => unknown;
+  normalize?: (value: unknown) => string | number;
   onChange?: (
     value: unknown,
-    element: INodeInstance,
+    element: TChild,
     inputOptions: IInputOptions
   ) => void;
   /**
@@ -43,7 +43,7 @@ export interface IInputOptions {
 }
 
 interface IElementOptions {
-  mstModel: IAnyModelType;
+  model: ModelClass<TChild>;
   component: ElementComponentType;
   // define input options in the properties panel user interface (UI)
   inputs?: IInputOptions[];
@@ -57,16 +57,16 @@ function registerElement(type: ELEMENT_TYPE, options: IElementOptions) {
 
 export function registerAllElements() {
   registerElement(ELEMENT_TYPE.group, {
-    mstModel: GroupModel,
+    model: GroupModel,
     component: GroupElement,
   });
   registerElement(ELEMENT_TYPE.image, {
-    mstModel: ImageModel,
+    model: ImageModel,
     component: ImageElement,
     inputs: [...COMMON_INPUT_OPTIONS],
   });
   registerElement(ELEMENT_TYPE.line, {
-    mstModel: LineModel,
+    model: LineModel,
     component: LineElement,
     inputs: [
       // example
@@ -76,7 +76,7 @@ export function registerAllElements() {
         type: INPUT_TYPE.number,
         onChange: (value, element, inputOptions) => {
           const { name, normalize } = inputOptions;
-          element.set({ [name]: normalize!(value) });
+          element.patch({ [name]: normalize!(value) });
         },
         normalize: (value) => {
           return Math.round(Number(value)) || 0;
@@ -104,7 +104,7 @@ const COMMON_INPUT_OPTIONS: IInputOptions[] = [
     type: INPUT_TYPE.text,
     bindable: true,
     onChange: (value, element, inputOptions) => {
-      element.set({ [inputOptions.name]: value });
+      element.patch({ [inputOptions.name]: value });
     },
   },
   {
@@ -112,7 +112,7 @@ const COMMON_INPUT_OPTIONS: IInputOptions[] = [
     type: INPUT_TYPE.number,
     onChange: (value, element, inputOptions) => {
       const { name, normalize } = inputOptions;
-      element.set({ [name]: normalize!(value) });
+      element.patch({ [name]: normalize!(value) });
     },
     normalize: (value) => {
       return Math.round(Number(value)) || 0;
@@ -123,7 +123,7 @@ const COMMON_INPUT_OPTIONS: IInputOptions[] = [
     type: INPUT_TYPE.number,
     onChange: (value, element, inputOptions) => {
       const { name, normalize } = inputOptions;
-      element.set({ [name]: normalize!(value) });
+      element.patch({ [name]: normalize!(value) });
     },
     normalize: (value) => {
       return Math.round(Number(value)) || 0;
@@ -134,7 +134,7 @@ const COMMON_INPUT_OPTIONS: IInputOptions[] = [
     type: INPUT_TYPE.number,
     onChange: (value, element, inputOptions) => {
       const { name, normalize } = inputOptions;
-      element.set({ [name]: normalize!(value) });
+      element.patch({ [name]: normalize!(value) });
     },
     normalize: (value) => {
       return Math.round(Number(value)) || 0;

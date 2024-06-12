@@ -1,7 +1,8 @@
 import { createContext, useContext } from "react";
-import { IStoreInstance } from "@/model/store";
 
-const storeContext = createContext<IStoreInstance | null>(null);
+import { Store } from "@/model/store.new";
+
+const storeContext = createContext<Store | null>(null);
 
 export const StoreContextProvider = storeContext.Provider;
 
